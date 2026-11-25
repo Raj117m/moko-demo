@@ -3,104 +3,94 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Moko Files</title>
+<title>Moko Lunch Story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* v3 look: dark cinematic glass, light blooms, soft blur-in lines, floating 3D panels, one cream flash. Moko's own colours and fonts. */
+/* v3 (light build): dark cinematic look kept, but no blur filters, no glass blur, no 3D tilt, no endless shine. Moko's own colours and fonts. */
 :root{
-  --bg:#151B18; --ink:#F4EEE2; --muted:#9BA69F; --line:rgba(244,238,226,.14); --glass:rgba(244,238,226,.06);
-  --cta:#C84B31; --cta-ink:#FFF8EE; --gold:#E5A93B; --mint:#2FE59D; --live:#16795C;
-  --f-head:'Bricolage Grotesque',system-ui,sans-serif; --f-body:'Plus Jakarta Sans',system-ui,sans-serif; --f-num:'Space Grotesk',ui-monospace,monospace;
+  --bg:#151B18; --ink:#F4EEE2; --muted:#A3AEA7; --line:rgba(244,238,226,.16); --glass:rgba(244,238,226,.07);
+  --cta:#C84B31; --cta-ink:#FFF8EE; --gold:#E5A93B; --mint:#2FE59D;
+  --f-head:'Bricolage Grotesque',system-ui,sans-serif; --f-body:'Plus Jakarta Sans',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:var(--f-body);background:#E9E1D0;color:#1F1916;display:flex;align-items:center;justify-content:center;overflow:hidden}
+body{font-family:var(--f-body);background:#E9E1D0;color:#1F1916;display:flex;align-items:center;justify-content:center;overflow:hidden;font-variant-numeric:tabular-nums}
 button,input{font:inherit;color:inherit;border:0;background:none}button{cursor:pointer}
 .stage{display:flex;gap:40px;align-items:center;justify-content:center;width:100%;height:100%;padding:16px}
-.phone{position:relative;width:390px;height:min(844px,100%);border-radius:40px;overflow:hidden;border:7px solid #060807;background:#000;flex:none;box-shadow:0 30px 70px rgba(31,25,22,.35)}
+.phone{position:relative;width:390px;height:min(844px,100%);border-radius:40px;overflow:hidden;border:7px solid #060807;background:#000;flex:none}
 .app{position:absolute;inset:0;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;overflow:hidden}
-/* light blooms: always drifting, never still */
-.bloom{position:absolute;border-radius:50%;filter:blur(64px);pointer-events:none;z-index:0}
-.b1{width:300px;height:300px;left:-90px;top:60px;background:rgba(229,169,59,.34);animation:d1 16s ease-in-out infinite alternate}
-.b2{width:280px;height:280px;right:-100px;top:340px;background:rgba(200,75,49,.30);animation:d2 19s ease-in-out infinite alternate}
-.b3{width:220px;height:220px;left:30px;bottom:-60px;background:rgba(47,229,157,.14);animation:d1 22s ease-in-out infinite alternate-reverse}
-.app[data-mode="evening"] .b1{background:rgba(200,75,49,.32)}.app[data-mode="evening"] .b2{background:rgba(47,229,157,.14)}
-@keyframes d1{to{transform:translate(70px,50px) scale(1.15)}}@keyframes d2{to{transform:translate(-60px,-70px) scale(1.12)}}
+/* soft light: plain gradients that drift on the GPU. No blur filter. */
+.glow{position:absolute;width:460px;height:460px;border-radius:50%;pointer-events:none;z-index:0;will-change:transform}
+.g1{left:-200px;top:20px;background:radial-gradient(circle,rgba(229,169,59,.30),transparent 65%);animation:d1 18s ease-in-out infinite alternate}
+.g2{right:-220px;top:380px;background:radial-gradient(circle,rgba(200,75,49,.26),transparent 65%);animation:d2 22s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate3d(60px,40px,0)}}@keyframes d2{to{transform:translate3d(-50px,-60px,0)}}
 .top{position:relative;z-index:5;display:flex;align-items:center;padding:16px 20px 6px}
 .brand{font:600 17px var(--f-head);letter-spacing:.34em;text-transform:uppercase}
-.coinchip{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--line);border-radius:99px;padding:6px 12px 6px 9px;font:700 14px var(--f-num);backdrop-filter:blur(14px)}
-.coin{width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f7d98a,var(--gold) 60%,#a9761a);display:inline-block}
-#pages{position:relative;z-index:2;flex:1;overflow:hidden;perspective:1000px}
+.coinchip{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--line);border-radius:99px;padding:6px 12px 6px 9px;font:600 14px var(--f-body)}
+.coin{width:11px;height:11px;border-radius:50%;background:var(--gold);display:inline-block}
+#pages{position:relative;z-index:2;flex:1;overflow:hidden}
 #page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:14px 20px 100px;scrollbar-width:none}
 #page::-webkit-scrollbar{display:none}
-.center{text-align:center}
-.kick{font:500 11px var(--f-body);letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
-.hero{font-family:var(--f-head);font-weight:500;font-size:76px;line-height:.98;letter-spacing:-.025em;margin:12px 0 4px;background:linear-gradient(180deg,#fff7e6,#d9cbb0 70%,#a89a82);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero.m{font-size:48px}
-.cap{font:300 17px/1.4 var(--f-body);color:var(--muted)}
-.cap b{color:var(--ink);font-weight:500}
-/* glass */
-.card{position:relative;margin-top:18px;padding:18px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(244,238,226,.10),rgba(244,238,226,.03));backdrop-filter:blur(16px);overflow:hidden;transform-style:preserve-3d}
-.card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.13) 50%,transparent 60%);transform:translateX(-120%);animation:sw 7s ease-in-out infinite;pointer-events:none}
-@keyframes sw{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
-.card h3{font:600 26px/1.08 var(--f-head);letter-spacing:-.015em;margin:6px 0 8px}
-.sub{font-size:13.5px;line-height:1.55;color:var(--muted)}
-.num{font-family:var(--f-num);font-weight:700}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin-top:16px;border-radius:16px;font:600 15px var(--f-body);letter-spacing:.01em;background:linear-gradient(180deg,#d9573a,var(--cta));color:var(--cta-ink);box-shadow:0 8px 30px rgba(200,75,49,.35),inset 0 1px 0 rgba(255,255,255,.25)}
-.btn.glass{background:var(--glass);color:var(--ink);border:1px solid var(--line);box-shadow:none;backdrop-filter:blur(14px)}
+.kick{font:500 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.hero{font:600 40px/1.05 var(--f-head);letter-spacing:-.02em;margin:10px 0 8px;color:#fff7e6}
+.hero.big{font-size:72px;margin-top:6px}
+.cap{font:400 16px/1.5 var(--f-body);color:var(--muted)}
+.cap b{color:var(--ink);font-weight:600}
+.card{margin-top:16px;padding:18px;border-radius:20px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(244,238,226,.10),rgba(244,238,226,.04))}
+.card h3{font:600 24px/1.1 var(--f-head);letter-spacing:-.015em;margin:6px 0 8px}
+.sub{font-size:14px;line-height:1.5;color:var(--muted)}
+.sub b{color:var(--ink);font-weight:600}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;margin-top:14px;border-radius:16px;font:600 15px var(--f-body);background:var(--cta);color:var(--cta-ink)}
+.btn.glass{background:var(--glass);color:var(--ink);border:1px solid var(--line)}
 .btn.sm{width:auto;min-height:40px;margin:0;padding:0 16px;font-size:13px;border-radius:12px}
-.btn[disabled]{background:var(--glass);color:var(--muted);box-shadow:none;border:1px dashed var(--line);cursor:not-allowed}
-.btn:active{transform:scale(.985)}
+.btn[disabled]{background:var(--glass);color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}
+.btn:active{opacity:.85}
 .row{display:flex;align-items:center;gap:12px}.grow{flex:1;min-width:0}
-/* progress pill with a travelling light streak (reel 3) */
-.prog{position:relative;height:44px;border-radius:99px;border:1px solid var(--line);background:var(--glass);overflow:hidden;margin-top:18px}
-.prog i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(229,169,59,.55),rgba(200,75,49,.8));border-radius:99px}
-.prog i::after{content:"";position:absolute;top:0;bottom:0;width:60px;right:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55));filter:blur(4px)}
-.prog b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 15px var(--f-num);letter-spacing:.04em}
-/* day strip */
+/* how it works: 3 steps */
+.steps{display:flex;gap:8px;margin-top:16px}
+.st{flex:1;padding:12px 10px;border-radius:14px;border:1px solid var(--line);background:var(--glass);font-size:12.5px;line-height:1.35;color:var(--ink)}
+.st b{display:block;font:600 11px var(--f-body);letter-spacing:.14em;color:var(--gold);margin-bottom:4px}
+/* progress */
+.prog{position:relative;height:42px;border-radius:99px;border:1px solid var(--line);background:var(--glass);overflow:hidden;margin-top:16px}
+.prog i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(229,169,59,.5),rgba(200,75,49,.75));border-radius:99px}
+.prog b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 14px var(--f-body)}
 .days{display:flex;gap:8px;margin-top:16px}
-.dy{flex:1;height:54px;border-radius:14px;border:1px solid var(--line);background:var(--glass);font:600 12px var(--f-body);color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
-.dy small{font:500 9px var(--f-body);letter-spacing:.14em;text-transform:uppercase}
-.dy.done{color:var(--ink);border-color:rgba(229,169,59,.55)}.dy.today{color:var(--ink);background:rgba(200,75,49,.28);border-color:var(--cta)}.dy.sel{outline:1px solid var(--ink)}
-.dy.lock{opacity:.5}
-.ln{display:block;margin-top:10px;font:300 17px/1.5 var(--f-body);color:var(--ink)}
+.dy{flex:1;height:52px;border-radius:14px;border:1px solid var(--line);background:var(--glass);font:600 12px var(--f-body);color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.dy small{font:500 9px var(--f-body);letter-spacing:.12em;text-transform:uppercase}
+.dy.done{color:var(--ink);border-color:rgba(229,169,59,.55)}.dy.today{color:var(--ink);background:rgba(200,75,49,.28);border-color:var(--cta)}.dy.sel{outline:1px solid var(--ink)}.dy.lock{opacity:.5}
+.ln{display:block;margin-top:10px;font:400 16.5px/1.5 var(--f-body);color:var(--ink)}
 .ln em{font-style:normal;font-weight:600;background:linear-gradient(transparent 62%,rgba(229,169,59,.45) 62%)}
-.blur{filter:blur(7px);opacity:.55;user-select:none}
-.sus{display:flex;gap:8px;margin-top:14px}.sus button{flex:1;padding:12px 6px;border-radius:14px;border:1px solid var(--line);background:var(--glass);font:600 11px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ln.dim{color:var(--muted);-webkit-mask-image:linear-gradient(90deg,#000 15%,transparent 85%);mask-image:linear-gradient(90deg,#000 15%,transparent 85%)}
+.sus{display:flex;gap:8px;margin-top:12px}.sus button{flex:1;padding:12px 4px;border-radius:14px;border:1px solid var(--line);background:var(--glass);font:600 11px var(--f-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .sus button.on{border-color:var(--gold);color:var(--ink);background:rgba(229,169,59,.18)}
-.tag{display:inline-block;margin-top:8px;font:600 10px var(--f-body);letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--muted)}
+.tag{display:inline-block;margin-top:10px;font:600 10px var(--f-body);letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--muted)}
 .field{width:100%;height:54px;margin-top:12px;padding:0 16px;border-radius:16px;border:1px solid var(--line);background:var(--glass);font-size:16px;outline:none}
 .field:focus{border-color:var(--gold)}
 .pass{border-color:rgba(229,169,59,.5);background:linear-gradient(150deg,rgba(229,169,59,.18),rgba(200,75,49,.12))}
-.code{font:700 30px var(--f-num);letter-spacing:.08em;margin:8px 0 4px}
+.code{font:700 28px var(--f-body);letter-spacing:.08em;margin:8px 0 4px}
 .rw{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line)}.rw:first-of-type{border:0}
-.rw b{font:600 17px var(--f-head);display:block}
-.cost{font:700 13px var(--f-num);display:inline-flex;align-items:center;gap:6px}
-/* tabs */
-.tabs{position:absolute;left:14px;right:14px;bottom:14px;z-index:6;display:flex;height:56px;border-radius:20px;background:rgba(12,16,14,.7);border:1px solid var(--line);backdrop-filter:blur(18px)}
-.tab{flex:1;font:600 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);position:relative;z-index:1}
+.rw b{font:600 16px var(--f-head);display:block}
+.cost{font:600 13px var(--f-body);display:inline-flex;align-items:center;gap:6px}
+.tabs{position:absolute;left:14px;right:14px;bottom:14px;z-index:6;display:flex;height:56px;border-radius:20px;background:#0c100e;border:1px solid var(--line)}
+.tab{flex:1;font:600 11px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);position:relative;z-index:1}
 .tab.on{color:var(--ink)}
 #bar{position:absolute;top:5px;bottom:5px;left:5px;width:calc(25% - 5px);border-radius:15px;background:rgba(244,238,226,.12);border:1px solid var(--line)}
-/* overlays */
 .layer{position:absolute;inset:0;pointer-events:none;z-index:20;overflow:hidden}
 #flash{background:#FFF8EE;opacity:0;z-index:31}
-#coins i{position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f7d98a,var(--gold) 60%,#a9761a)}
+#coins i{position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;background:var(--gold)}
 #scrim{background:rgba(0,0,0,.55);opacity:0;z-index:24}
-#sheet{position:absolute;left:0;right:0;bottom:0;background:rgba(18,24,21,.92);backdrop-filter:blur(24px);border-top:1px solid var(--line);border-radius:28px 28px 0 0;padding:22px 20px 26px;z-index:25;transform:translateY(105%);pointer-events:auto}
-.scode{font:700 42px var(--f-num);letter-spacing:.06em;margin:8px 0 2px}
-.clock{font:500 12px var(--f-num);letter-spacing:.1em;color:var(--muted)}
-.pin{display:flex;gap:12px;justify-content:center;margin:16px 0}.pin i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--muted)}.pin i.f{background:var(--mint);border-color:var(--mint);box-shadow:0 0 12px var(--mint)}
-.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pad button{height:50px;border-radius:16px;background:var(--glass);border:1px solid var(--line);font:600 20px var(--f-num)}
-#toast{position:absolute;left:16px;right:16px;top:60px;z-index:26;background:rgba(244,238,226,.94);color:#151B18;border-radius:16px;padding:12px 16px;font:600 13.5px var(--f-body);opacity:0;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#sheet{position:absolute;left:0;right:0;bottom:0;background:#121815;border-top:1px solid var(--line);border-radius:28px 28px 0 0;padding:22px 20px 26px;z-index:25;transform:translateY(105%);pointer-events:auto}
+.scode{font:700 40px var(--f-body);letter-spacing:.06em;margin:8px 0 2px}
+.clock{font:500 12px var(--f-body);letter-spacing:.1em;color:var(--muted)}
+.pin{display:flex;gap:12px;justify-content:center;margin:16px 0}.pin i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--muted)}.pin i.f{background:var(--mint);border-color:var(--mint)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pad button{height:50px;border-radius:16px;background:var(--glass);border:1px solid var(--line);font:600 20px var(--f-body)}
+#toast{position:absolute;left:16px;right:16px;top:60px;z-index:26;background:#F4EEE2;color:#151B18;border-radius:16px;padding:12px 16px;font:600 13.5px var(--f-body);opacity:0;pointer-events:none}
 #owner{position:absolute;inset:0;z-index:22;background:var(--bg);padding:18px 20px 30px;overflow-y:auto;transform:translateY(100%);scrollbar-width:none}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.stat{padding:14px;border-radius:18px;border:1px solid var(--line);background:var(--glass)}
-.stat b{display:block;font:600 34px var(--f-head);line-height:1}.stat span{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.stat b{display:block;font:600 32px var(--f-head);line-height:1}.stat span{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
 .bar{height:8px;border-radius:9px;background:var(--glass);margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--cta))}
 .bl{display:flex;justify-content:space-between;margin-top:12px;font-size:13px}
-/* panel */
 .panel{width:290px;background:#FAF6EE;border:1px solid #1F1916;border-radius:16px;padding:18px;color:#1F1916}
 .panel h3{font:700 20px var(--f-head);margin-bottom:2px}.panel p{font-size:12px;color:#6E635B;margin-bottom:10px}
 .panel .g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
@@ -108,19 +98,19 @@ button,input{font:inherit;color:inherit;border:0;background:none}button{cursor:p
 .panel .g button.on{background:#1F1916;color:#FAF6EE}.panel .w{width:100%;margin-bottom:8px}
 .panel ol{font-size:12px;padding-left:16px;margin:8px 0;line-height:1.55}.panel small{display:block;font-size:11px;color:#6E635B;line-height:1.5}
 @media (max-width:860px){.panel{position:fixed;left:8px;right:8px;bottom:8px;width:auto;z-index:99;display:none}.panel.show{display:block}.phone{width:100%;height:100%;border:0;border-radius:0}.stage{padding:0}.demobtn{display:flex!important}}
-.demobtn{display:none;position:fixed;bottom:80px;right:14px;z-index:100;background:#F4EEE2;color:#151B18;padding:8px 12px;border-radius:99px;font:700 10px var(--f-body);letter-spacing:.12em;cursor:pointer}
-@media (prefers-reduced-motion:reduce){.bloom,.card::after{animation:none}}
+.demobtn{display:none;position:fixed;bottom:80px;right:14px;z-index:100;background:#F4EEE2;color:#151B18;padding:8px 12px;border-radius:99px;font:600 10px var(--f-body);letter-spacing:.12em;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.glow{animation:none}}
 </style>
 </head>
 <body>
 <button class="demobtn" id="demoToggle">DEMO</button>
 <div class="stage">
-  <div class="phone"><div class="app" id="app" data-mode="lunch">
-    <div class="bloom b1"></div><div class="bloom b2"></div><div class="bloom b3"></div>
-    <div class="top"><span class="brand">Moko</span><div class="coinchip" id="chip"><span class="coin"></span><span id="bal">60</span></div></div>
+  <div class="phone"><div class="app" id="app">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="top"><span class="brand">Moko</span><div class="coinchip"><span class="coin"></span><span id="bal">60</span></div></div>
     <div id="pages"><div id="page"></div></div>
     <div class="tabs" id="tabs"><div id="bar"></div>
-      <button class="tab on" data-p="today">Lunch</button><button class="tab" data-p="case">Case</button><button class="tab" data-p="invite">Invite</button><button class="tab" data-p="wallet">Wallet</button></div>
+      <button class="tab on" data-p="today">Lunch</button><button class="tab" data-p="case">Story</button><button class="tab" data-p="invite">Invite</button><button class="tab" data-p="wallet">Wallet</button></div>
     <div id="toast"></div>
     <div id="scrim" class="layer"></div>
     <div id="sheet"></div>
@@ -133,55 +123,48 @@ button,input{font:inherit;color:inherit;border:0;background:none}button{cursor:p
     <div class="g" id="clockBtns"><button data-m="lunch" class="on">12:30 PM</button><button data-m="evening">8:30 PM</button></div>
     <div class="g"><button id="srcNfc">Tap NFC</button><button id="srcQr">Scan QR</button></div>
     <button class="w" id="ownerBtn">Owner view</button><button class="w" id="reset">Reset demo</button>
-    <ol><li>Lunch: unlock today's file with a paid order (staff PIN <b>1234</b>).</li><li>Invite tab: name a colleague, then tap "Friend arrived".</li><li>Press 8:30 PM, then 12:30 PM for the next day's file.</li></ol>
+    <ol><li>Lunch: open today's chapter (staff PIN <b>1234</b>).</li><li>Invite: name a colleague, then tap "Friend arrived".</li><li>Press 8:30 PM, then 12:30 PM for the next chapter.</li></ol>
     <small>Same sticker, two ways in: NFC chip and printed QR, both open one link. All numbers and the 50% cap are placeholders until Moko agrees them.</small>
   </aside>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-/* ============ MOTION KIT v3: cinematic, from the dark product reel ============
-   lines   : fade up out of a soft blur, one idea at a time, slow ease-out (.16,1,.3,1)
-   panels  : glass cards tilt in from depth (rotateX) and then float
-   pill    : a percentage pill fills with a light streak
-   flash   : one cream frame on the big moments (file opens, friend arrives, case solved)
-   always  : light blooms drift, a highlight sweeps across the glass */
-gsap.registerPlugin(CustomEase);
+/* ============ MOTION (light): fade and rise on the reel's ease-out, one cream flash on big moments ============ */
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches, D = s => RM ? 0 : s;
-const E = {out:CustomEase.create('o','.16,1,.3,1'), in:CustomEase.create('i','.7,0,.84,0')};
+const OUT = 'expo.out', IN = 'power2.in';
 const $ = (s,r=document)=>r.querySelector(s), $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app = $('#app'), phone = $('.phone'), page = $('#page');
 
 function enter(){
-  gsap.killTweensOf('.float');
-  gsap.fromTo($$('.rise', page), {opacity:0, y:18, filter:RM?'none':'blur(10px)'}, {opacity:1, y:0, filter:'blur(0px)', duration:D(.9), ease:E.out, stagger:D(.09), clearProps:'filter,transform,opacity'});
-  gsap.fromTo($$('.tilt', page), {opacity:0, rotationX:RM?0:24, y:RM?0:40, transformPerspective:900, transformOrigin:'50% 100%'}, {opacity:1, rotationX:0, y:0, duration:D(1.1), ease:E.out, stagger:D(.12), delay:D(.15), onComplete:function(){ if(!RM) gsap.to($$('.float', page), {rotationY:1.8, rotationX:-1, duration:5, yoyo:true, repeat:-1, ease:'sine.inOut', transformPerspective:900}); }});
-  $$('.prog', page).forEach(p => { const v = +p.dataset.v; const i = $('i', p), b = $('b', p); gsap.to(i, {width:v + '%', duration:D(1.1), ease:E.out, delay:D(.3)}); count(b, v, {from:0, dur:1.1, suf:'%', pre:p.dataset.pre || ''}); });
-  $$('.ln', page).forEach((l, k) => gsap.fromTo(l, {opacity:0, y:12, filter:RM?'none':'blur(8px)'}, {opacity:1, y:0, filter:'blur(0px)', duration:D(.8), ease:E.out, delay:D(.35 + k*.22), clearProps:'filter,transform'}));
+  gsap.fromTo($$('.rise,.card', page), {opacity:0, y:16}, {opacity:1, y:0, duration:D(.7), ease:OUT, stagger:D(.06), clearProps:'transform,opacity'});
+  $$('.prog', page).forEach(p => gsap.to($('i', p), {width:p.dataset.v + '%', duration:D(1), ease:OUT, delay:D(.25)}));
+  $$('.bar i', page).forEach(b => gsap.to(b, {width:b.dataset.w + '%', duration:D(1), ease:OUT, delay:D(.25)}));
 }
-function count(el, to, {from=null, dur=.8, pre='', suf=''} = {}){
+function count(el, to, {from=null, dur=.8} = {}){
   const cur = from ?? (parseFloat(el.dataset.v) || 0), o = {v:cur}; el.dataset.v = to;
   el._tw && el._tw.kill();
-  el._tw = gsap.to(o, {v:to, duration:D(dur), ease:E.out, onUpdate:()=>{el.textContent = pre + Math.round(o.v).toLocaleString('en-IN') + suf}, onComplete:()=>{el.textContent = pre + Math.round(to).toLocaleString('en-IN') + suf}});
+  el._tw = gsap.to(o, {v:to, duration:D(dur), ease:OUT, onUpdate:()=>{el.textContent = Math.round(o.v).toLocaleString('en-IN')}, onComplete:()=>{el.textContent = Math.round(to).toLocaleString('en-IN')}});
 }
-/* tab change: the page softens out, swaps on its own timer, softens back in */
+/* tab change: fade out, swap on a plain timer (a slow or hidden tab can never leave it half-changed), fade in */
 function swap(fn){
   if(RM){ fn(); return; }
-  gsap.to(page, {opacity:0, y:-8, filter:'blur(8px)', duration:.24, ease:E.in});
-  setTimeout(() => { fn(); gsap.set(page, {opacity:1, y:0, filter:'none', clearProps:'filter,transform'}); }, 250);
+  gsap.to(page, {opacity:0, y:-6, duration:.18, ease:IN});
+  setTimeout(() => { fn(); gsap.set(page, {opacity:1, y:0, clearProps:'transform,opacity'}); }, 190);
 }
-function flash(){ if(RM) return; gsap.fromTo('#flash', {opacity:.85}, {opacity:0, duration:.5, ease:'power2.out'}); }
+function flash(){ if(RM) return; gsap.fromTo('#flash', {opacity:.8}, {opacity:0, duration:.4, ease:'power2.out'}); }
 let toastT;
-function toast(m){ const t = $('#toast'); t.textContent = m; gsap.killTweensOf(t); gsap.fromTo(t, {opacity:0, y:-14, filter:RM?'none':'blur(6px)'}, {opacity:1, y:0, filter:'blur(0px)', duration:D(.5), ease:E.out}); clearTimeout(toastT); toastT = setTimeout(() => gsap.to(t, {opacity:0, y:-8, duration:D(.35), ease:E.in}), 2400); }
+function toast(m){ const t = $('#toast'); t.textContent = m; gsap.killTweensOf(t); gsap.fromTo(t, {opacity:0, y:-12}, {opacity:1, y:0, duration:D(.4), ease:OUT}); clearTimeout(toastT); toastT = setTimeout(() => gsap.to(t, {opacity:0, duration:D(.3)}), 2400); }
 function award(n, fromEl){
   if(n > 0){
-    const pr = phone.getBoundingClientRect(), fr = fromEl.getBoundingClientRect(), tr = $('.coinchip .coin').getBoundingClientRect(), b = phone.clientLeft, k = Math.min(9, Math.max(4, Math.round(n/12)));
+    const pr = phone.getBoundingClientRect(), fr = fromEl.getBoundingClientRect(), tr = $('.coinchip .coin').getBoundingClientRect(), b = phone.clientLeft, k = Math.min(7, Math.max(3, Math.round(n/15)));
     const sx = fr.left + fr.width/2 - pr.left - b, sy = fr.top + fr.height/2 - pr.top - b, tx = tr.left - pr.left - b, ty = tr.top - pr.top - b;
-    for(let j = 0; j < k; j++){ const c = document.createElement('i'); $('#coins').appendChild(c); gsap.set(c, {x:sx + (Math.random()*40-20), y:sy + (Math.random()*30-15), scale:.4, opacity:0}); gsap.to(c, {opacity:1, scale:1, duration:D(.25), delay:D(j*.04)}); gsap.to(c, {x:tx, y:ty, duration:D(.9), delay:D(.15 + j*.04), ease:E.out}); setTimeout(() => c.remove(), 2200); }
+    for(let j = 0; j < k; j++){ const c = document.createElement('i'); $('#coins').appendChild(c); gsap.set(c, {x:sx + (Math.random()*40-20), y:sy + (Math.random()*30-15)}); gsap.to(c, {x:tx, y:ty, duration:D(.8), delay:D(j*.05), ease:OUT}); setTimeout(() => c.remove(), 2000); }
   }
-  setTimeout(() => { const from = S.bal; S.bal += n; count($('#bal'), S.bal, {from, dur:.8}); const w = $('#wbal'); if(w) count(w, S.bal, {from, dur:.8}); }, D(n > 0 ? 700 : 0));
+  setTimeout(() => { const from = S.bal; S.bal += n; count($('#bal'), S.bal, {from}); const w = $('#wbal'); if(w) count(w, S.bal, {from}); }, D(n > 0 ? 650 : 0));
 }
 
-/* ============ THE CASE (placeholder story, written for adults) ============ */
+/* ============ THE STORY (placeholder, written for adults) ============ */
 const CASE = {name:'The Midnight Reservation', files:[
   {t:'A table for nobody', l:['Every night, one booth by the arches is booked under a name nobody has met: <em>A. Reyes</em>.','The bill is paid in cash and rounded up. The booth is empty by 10:40.']},
   {t:'The 2019 order', l:['The server remembers one thing. The guest never opens the menu.','He orders by <em>describing a dish from 2019</em> that is no longer served.']},
@@ -195,75 +178,70 @@ const DAYS = ['Mon','Tue','Wed','Thu','Fri'];
 /* ============ STATE ============ */
 const fresh = () => ({mode:'lunch', day:3, unlocked:[true,true,false,false,false], lead:null, solved:null, bal:60, tab:'today', src:'qr', sel:3, invites:[], tickets:[], st:{files:12, invites:0, came:0, redeemed:0}});
 let S = fresh(), tid = 0;
-const lunch = () => S.mode === 'lunch', cnt = () => S.unlocked.filter(Boolean).length, pct = () => cnt()*20;
+const lunch = () => S.mode === 'lunch', cnt = () => S.unlocked.filter(Boolean).length;
 const REWARDS = [{title:'Filter coffee on the house', cost:100, min:'₹400'},{title:'Dessert of the day', cost:150, min:'₹500'},{title:'Chef\'s lunch special, half price', cost:400, min:'₹600'}];
 
-/* ============ PAGES ============ */
+/* ============ PAGES (plain words: what it is, what to do next) ============ */
 const R = (h, c='') => `<div class="rise ${c}">${h}</div>`;
 function pToday(){
-  const f = CASE.files[S.day-1], un = S.unlocked[S.day-1], streak = cnt();
-  if(!lunch()) return `<div class="center">${R('<div class="kick">Tonight · Bench 4 · via ' + S.src.toUpperCase() + '</div>')}${R('<div class="hero">Sealed</div>')}${R('<p class="cap">Tomorrow\'s file opens at <b>12:00 PM</b>.<br>One lunch order unlocks it.</p>')}</div>
-    <div class="card tilt float"><div class="kick">File 0${Math.min(5,S.day+1)} · sealed</div><span class="ln blur">The booth was empty again, but the bread was still warm.</span><span class="ln blur">Someone had been here minutes ago.</span><span class="tag">Opens tomorrow, 12 PM</span></div>
-    <div class="card tilt"><div class="kick">Tonight's invite</div><h3>Bring a colleague tomorrow</h3><p class="sub">They get 50% off a lunch meal. You get 100 coins when they pay.</p><button class="btn glass" data-go="invite">Invite someone</button></div>`;
-  return `<div class="center">${R('<div class="kick">Lunch · Bench 4 · via ' + S.src.toUpperCase() + '</div>')}${R('<div class="hero">Day ' + S.day + '</div>')}${R('<p class="cap">of <b>' + CASE.name + '</b></p>')}</div>
-    <div class="prog rise" data-v="${pct()}"><i></i><b>0%</b></div>
-    <div class="card tilt float"><div class="kick">Today's file · 0${S.day}</div><h3>${f.t}</h3>
-      ${un ? '<p class="sub">Unlocked. Read it, then make your call.</p>' : '<span class="ln blur">' + f.l[0].replace(/<[^>]+>/g,'') + '</span>'}
-      <button class="btn" ${un ? 'data-go="case"' : 'data-unlock="1"'}>${un ? 'Read the file' : 'Unlock with today\'s lunch'}</button></div>
-    <div class="card tilt"><div class="kick">Your streak</div><h3>${streak} of 5 files</h3><p class="sub">Open all five this week for a <b style="color:var(--ink)">+100 coin</b> bonus and the final reveal.</p></div>
-    <div class="card tilt"><div class="kick">Bring a colleague</div><h3>50% off their lunch</h3><p class="sub">Name them, share the code. You earn 100 coins when they pay.</p><button class="btn glass" data-go="invite">Invite someone</button></div>`;
+  const f = CASE.files[S.day-1], un = S.unlocked[S.day-1];
+  const invite = `<div class="card"><div class="kick">Bring a colleague</div><h3>They get 50% off lunch</h3><p class="sub">You get 100 coins when they pay.</p><button class="btn glass" data-go="invite">Invite someone</button></div>`;
+  if(!lunch()) return `${R('<div class="kick">Tonight · Bench 4 · via ' + S.src.toUpperCase() + '</div>')}${R('<div class="hero">Tomorrow\'s chapter is sealed.</div>')}${R('<p class="cap">It opens at <b>12:00 PM</b> with your lunch order.</p>')}
+    <div class="card"><div class="kick">Chapter ${Math.min(5,S.day+1)} · sealed</div><span class="ln dim">The booth was empty again, but the bread was still warm.</span><span class="tag">Opens tomorrow, 12 PM</span></div>${invite}`;
+  return `${R('<div class="kick">Moko · Bench 4 · via ' + S.src.toUpperCase() + '</div>')}${R('<div class="hero">Lunch unlocks a story.</div>')}${R('<p class="cap">Each paid lunch opens one chapter of a 5-day mystery. Finish all five for <b>100 bonus coins</b>.</p>')}
+    <div class="steps rise"><div class="st"><b>1</b>Order lunch</div><div class="st"><b>2</b>Staff taps PIN</div><div class="st"><b>3</b>Chapter opens</div></div>
+    <div class="prog rise" data-v="${cnt()*20}"><i></i><b>${cnt()} of 5 chapters</b></div>
+    <div class="card"><div class="kick">Today · Chapter ${S.day}</div><h3>${f.t}</h3>
+      <p class="sub">${un ? 'Unlocked. Read it and pick your suspect.' : 'Locked until you have a paid lunch order today.'}</p>
+      <button class="btn" ${un ? 'data-go="case"' : 'data-unlock="1"'}>${un ? 'Read the chapter' : 'Open it with today\'s lunch'}</button></div>${invite}`;
 }
 function pCase(){
   const d = S.sel, f = CASE.files[d-1], un = S.unlocked[d-1], future = d > S.day, today = d === S.day;
   const strip = DAYS.map((n,i) => { const k = i+1, c = S.unlocked[i] ? 'done' : k === S.day ? 'today' : k > S.day ? 'lock' : ''; return `<button class="dy ${c} ${k === d ? 'sel' : ''}" data-sel="${k}"><span>${n}</span><small>${S.unlocked[i] ? 'open' : k > S.day ? 'sealed' : 'today'}</small></button>`; }).join('');
-  let body;
-  if(un) body = f.l.map(x => `<span class="ln">${x}</span>`).join('');
-  else body = f.l.map(x => `<span class="ln blur">${x.replace(/<[^>]+>/g,'')}</span>`).join('');
+  const body = f.l.map(x => un ? `<span class="ln">${x}</span>` : `<span class="ln dim">${x.replace(/<[^>]+>/g,'')}</span>`).join('');
   let act = '';
-  if(!un && today && lunch()) act = `<button class="btn" data-unlock="1">Unlock with today's lunch</button>`;
+  if(!un && today && lunch()) act = `<button class="btn" data-unlock="1">Open it with today's lunch</button>`;
   else if(!un && today) act = `<span class="tag">Opens 12:00 PM</span>`;
   else if(!un && future) act = `<span class="tag">Opens ${DAYS[d-1]} lunch</span>`;
-  else if(!un) act = `<span class="tag">Missed, no lunch order that day</span>`;
-  let lead = '';
-  if(un){ lead = `<div class="kick" style="margin-top:20px">Your lead</div><div class="sus">${CASE.sus.map(s => `<button class="${S.lead === s[0] ? 'on' : ''}" data-lead="${s[0]}">${s[1]}</button>`).join('')}</div>`; }
+  else if(!un) act = `<span class="tag">Missed: no lunch order that day</span>`;
+  const lead = un ? `<div class="kick" style="margin-top:20px">Who do you suspect?</div><div class="sus">${CASE.sus.map(s => `<button class="${S.lead === s[0] ? 'on' : ''}" data-lead="${s[0]}">${s[1]}</button>`).join('')}</div>` : '';
   let fin = '';
-  if(S.solved) fin = `<div class="card tilt pass"><div class="kick">Case closed</div><h3>${S.solved === 'right' ? 'You got them' : 'Not quite'}</h3><p class="sub" style="color:var(--ink)">${CASE.reveal}</p></div>`;
-  else if(cnt() === 5 && S.unlocked[4]) fin = `<div class="card tilt"><div class="kick">Final</div><h3>Name your suspect</h3><p class="sub">${S.lead ? 'Your lead is set. Accuse, or change it above.' : 'Pick a lead above first.'}</p><button class="btn" id="accuse" ${S.lead ? '' : 'disabled'}>Make the accusation</button></div>`;
-  return `<div class="center">${R('<div class="kick">The Moko Files</div>')}${R('<div class="hero m">' + CASE.name + '</div>')}</div>
+  if(S.solved) fin = `<div class="card pass"><div class="kick">Case closed</div><h3>${S.solved === 'right' ? 'You got them' : 'Not quite'}</h3><p class="sub" style="color:var(--ink)">${CASE.reveal}</p></div>`;
+  else if(cnt() === 5 && S.unlocked[4]) fin = `<div class="card"><div class="kick">Final step</div><h3>Name your suspect</h3><p class="sub">${S.lead ? 'Your pick is set. Accuse, or change it above.' : 'Pick a suspect above first.'}</p><button class="btn" id="accuse" ${S.lead ? '' : 'disabled'}>Make the accusation</button></div>`;
+  return `${R('<div class="kick">The story</div>')}${R('<div class="hero">' + CASE.name + '</div>')}${R('<p class="cap">One chapter per lunch, Monday to Friday.</p>')}
     <div class="days rise">${strip}</div>
-    <div class="card tilt float"><div class="kick">File 0${d}</div><h3>${un || today ? f.t : 'Sealed'}</h3>${body}${act}${lead}</div>${fin}`;
+    <div class="card"><div class="kick">Chapter ${d}</div><h3>${un || today ? f.t : 'Sealed'}</h3>${body}${act}${lead}</div>${fin}`;
 }
 function pInvite(){
-  const rows = S.invites.map(v => `<div class="rw"><div class="grow"><b>${esc(v.name)}</b><span class="sub num">${v.code}</span></div>${v.status === 'came' ? '<span class="tag" style="margin:0;border-color:var(--mint);color:var(--mint)">Came · +100</span>' : `<button class="btn sm glass" data-friend="${v.id}">Friend arrived</button>`}</div>`).join('');
+  const rows = S.invites.map(v => `<div class="rw"><div class="grow"><b>${esc(v.name)}</b><span class="sub">${v.code}</span></div>${v.status === 'came' ? '<span class="tag" style="margin:0;border-color:var(--mint);color:var(--mint)">Came · +100</span>' : `<button class="btn sm glass" data-friend="${v.id}">Friend arrived</button>`}</div>`).join('');
   const last = S.invites[S.invites.length-1];
-  return `<div class="center">${R('<div class="kick">Invite</div>')}${R('<div class="hero m">Bring a colleague.</div>')}${R('<p class="cap">They get <b>50% off</b> a lunch meal.<br>You get <b>100 coins</b> when they pay.</p>')}</div>
-    <div class="card tilt"><div class="kick">Their first name</div><input class="field" id="fname" maxlength="20" placeholder="e.g. Arjun" autocomplete="off"><button class="btn" id="mkinv">Create the invite</button></div>
-    ${last && last.status === 'waiting' ? `<div class="card tilt float pass"><div class="kick">Invite for ${esc(last.name)}</div><div class="code">${last.code}</div><p class="sub">${esc(last.name)} shows this code at the counter on a weekday, 12 to 5 PM.</p><a class="btn glass" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Lunch at Moko on me. Show code ' + last.code + ' at the counter for 50% off your lunch meal (weekdays 12 to 5 PM).')}">Share on WhatsApp</a></div>` : ''}
-    ${S.invites.length ? `<div class="card tilt"><div class="kick">Your invites · ${S.invites.length}</div>${rows}</div>` : ''}
-    <p class="sub rise" style="margin-top:16px">50% off one lunch meal, up to ₹300, weekdays 12 to 5 PM, valid 14 days, new guests only, one per person. You earn after they pay. (Cap and rules are suggestions for the owner to confirm.)</p>`;
+  return `${R('<div class="kick">Invite</div>')}${R('<div class="hero">Bring a colleague.</div>')}${R('<p class="cap">They get <b>50% off</b> a lunch meal. You get <b>100 coins</b> when they pay.</p>')}
+    <div class="card"><div class="kick">Their first name</div><input class="field" id="fname" maxlength="20" placeholder="e.g. Arjun" autocomplete="off"><button class="btn" id="mkinv">Create the invite</button></div>
+    ${last && last.status === 'waiting' ? `<div class="card pass"><div class="kick">Invite for ${esc(last.name)}</div><div class="code">${last.code}</div><p class="sub">${esc(last.name)} shows this code at the counter on a weekday, 12 to 5 PM.</p><a class="btn glass" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Lunch at Moko on me. Show code ' + last.code + ' at the counter for 50% off your lunch meal (weekdays 12 to 5 PM).')}">Share on WhatsApp</a></div>` : ''}
+    ${S.invites.length ? `<div class="card"><div class="kick">Your invites · ${S.invites.length}</div>${rows}</div>` : ''}
+    <p class="sub rise" style="margin-top:14px">Up to ₹300 off, weekdays 12 to 5 PM, new guests only, once each, valid 14 days.</p>`;
 }
 function pWallet(){
-  const rs = REWARDS.map((r,i) => `<div class="rw"><div class="grow"><b>${r.title}</b><span class="sub">Needs a ${r.min} paid order</span></div><span class="cost"><span class="coin"></span>${r.cost}</span><button class="btn sm ${S.bal >= r.cost ? '' : 'glass'}" data-rw="${i}" ${S.bal >= r.cost ? '' : 'disabled'}>Redeem</button></div>`).join('');
-  const ts = S.tickets.map(t => `<div class="rw"><div class="grow"><b>${t.title}</b><span class="sub">${t.sub}</span></div><button class="btn sm" data-tk="${t.id}">Redeem</button></div>`).join('');
-  return `<div class="center">${R('<div class="kick">Wallet</div>')}${R('<div class="hero"><span id="wbal" data-v="' + S.bal + '">' + S.bal + '</span></div>')}${R('<p class="cap">coins. Earned only by lunch.</p>')}</div>
-    ${S.tickets.length ? `<div class="card tilt"><div class="kick">Your tickets</div>${ts}</div>` : ''}
-    <div class="card tilt"><div class="kick">Spend coins</div>${rs}</div>
-    <p class="sub rise" style="margin-top:14px">Every reward needs a paid order and a staff PIN. Coins can cover up to 30% of a bill.</p>`;
+  const rs = REWARDS.map((r,i) => `<div class="rw"><div class="grow"><b>${r.title}</b><span class="sub">With a ${r.min}+ order</span></div><span class="cost"><span class="coin"></span>${r.cost}</span><button class="btn sm ${S.bal >= r.cost ? '' : 'glass'}" data-rw="${i}" ${S.bal >= r.cost ? '' : 'disabled'}>Use</button></div>`).join('');
+  const ts = S.tickets.map(t => `<div class="rw"><div class="grow"><b>${t.title}</b><span class="sub">${t.sub}</span></div><button class="btn sm" data-tk="${t.id}">Use</button></div>`).join('');
+  return `${R('<div class="kick">Your coins</div>')}${R('<div class="hero big"><span id="wbal" data-v="' + S.bal + '">' + S.bal + '</span></div>')}${R('<p class="cap">You earn coins from lunches and invites.</p>')}
+    ${S.tickets.length ? `<div class="card"><div class="kick">Your tickets</div>${ts}</div>` : ''}
+    <div class="card"><div class="kick">Spend coins</div>${rs}</div>
+    <p class="sub rise" style="margin-top:14px">Staff confirm every reward with a PIN. Coins can cover up to 30% of a bill.</p>`;
 }
 const PAGES = {today:pToday, case:pCase, invite:pInvite, wallet:pWallet};
 function render(anim){
   page.innerHTML = PAGES[S.tab](); $('#bal').textContent = S.bal; $('#bal').dataset.v = S.bal;
-  const i = ['today','case','invite','wallet'].indexOf(S.tab); gsap.to('#bar', {x:i * (phone.clientWidth - 28)/4, duration:D(.5), ease:E.out});
+  const i = ['today','case','invite','wallet'].indexOf(S.tab); gsap.to('#bar', {x:i * (phone.clientWidth - 28)/4, duration:D(.4), ease:OUT});
   $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.p === S.tab));
   if(anim) enter();
 }
 function go(tab){ if(tab === S.tab) return; swap(() => { S.tab = tab; render(true); page.scrollTop = 0; }); }
-
 function setMode(m){
   if(m === S.mode) return;
   swap(() => {
     if(m === 'lunch'){ S.day = Math.min(5, S.day + 1); S.sel = S.day; }
-    S.mode = m; app.dataset.mode = m; $$('#clockBtns [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === m));
+    S.mode = m; $$('#clockBtns [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === m));
     render(true); page.scrollTop = 0;
   });
   flash();
@@ -271,12 +249,12 @@ function setMode(m){
 
 /* ============ SHEET: guest code, then staff PIN. Any confirm = a paid order. ============ */
 let clockT, cur = null, pin = '';
-function sheet(html){ const sh = $('#sheet'); sh.innerHTML = html; gsap.to('#scrim', {opacity:1, duration:D(.3)}); $('#scrim').style.pointerEvents = 'auto'; gsap.fromTo(sh, {yPercent:105}, {yPercent:0, duration:D(.6), ease:E.out}); }
-function closeSheet(){ clearInterval(clockT); gsap.to('#sheet', {yPercent:105, duration:D(.35), ease:E.in}); gsap.to('#scrim', {opacity:0, duration:D(.3)}); $('#scrim').style.pointerEvents = 'none'; }
+function sheet(html){ const sh = $('#sheet'); sh.innerHTML = html; gsap.to('#scrim', {opacity:1, duration:D(.25)}); $('#scrim').style.pointerEvents = 'auto'; gsap.fromTo(sh, {yPercent:105}, {yPercent:0, duration:D(.5), ease:OUT}); }
+function closeSheet(){ clearInterval(clockT); gsap.to('#sheet', {yPercent:105, duration:D(.3), ease:IN}); gsap.to('#scrim', {opacity:0, duration:D(.25)}); $('#scrim').style.pointerEvents = 'none'; }
 function open_(o){
   cur = o; pin = '';
   sheet(`<div class="kick">Show this to staff</div><div class="scode">MK-${4000 + Math.floor(Math.random()*5999)}</div><div class="clock" id="clk"></div>
-    <div class="card" style="margin-top:18px"><h3 style="font-size:22px">${esc(o.title)}</h3><p class="sub">${esc(o.sub)}</p></div>
+    <div class="card" style="margin-top:18px"><h3 style="font-size:21px">${esc(o.title)}</h3><p class="sub">${esc(o.sub)}</p></div>
     <button class="btn" id="staffBtn">Staff: confirm</button><button class="btn glass" id="cancelSheet">Cancel</button>`);
   const t = () => { $('#clk') && ($('#clk').textContent = new Date().toLocaleTimeString('en-IN')); }; t(); clockT = setInterval(t, 1000);
 }
@@ -284,42 +262,41 @@ function staffSheet(){
   pin = ''; clearInterval(clockT);
   $('#sheet').innerHTML = `<div class="kick">Staff confirm</div><h3 style="font:600 26px var(--f-head);margin:6px 0">Enter staff PIN</h3><div class="pin" id="pinDots"><i></i><i></i><i></i><i></i></div>
     <div class="pad">${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k => `<button data-k="${k}" ${k === '' ? 'style="visibility:hidden"' : ''}>${k}</button>`).join('')}</div>`;
-  gsap.fromTo('#sheet .pad button', {opacity:0, y:10}, {opacity:1, y:0, duration:D(.4), ease:E.out, stagger:D(.02)});
 }
 function pinKey(k){
   if(k === '⌫') pin = pin.slice(0,-1); else if(pin.length < 4) pin += k;
   $$('#pinDots i').forEach((d,i) => d.classList.toggle('f', i < pin.length));
-  if(pin.length === 4){ if(pin === '1234') done(); else { gsap.fromTo('#pinDots', {x:-10}, {x:0, duration:D(.5), ease:'elastic.out(1.2,.3)'}); pin = ''; setTimeout(() => $$('#pinDots i').forEach(d => d.classList.remove('f')), 250); } }
+  if(pin.length === 4){ if(pin === '1234') done(); else { gsap.fromTo('#pinDots', {x:-10}, {x:0, duration:D(.4), ease:'elastic.out(1.2,.3)'}); pin = ''; setTimeout(() => $$('#pinDots i').forEach(d => d.classList.remove('f')), 250); } }
 }
 function done(){
   const o = cur; flash();
-  $('#sheet').innerHTML = `<div class="center"><div class="kick" style="color:var(--mint)">Confirmed</div><div class="hero" style="font-size:64px;margin:10px 0">Paid.</div><p class="cap">${esc(o.title)}</p></div>`;
-  gsap.from('#sheet .hero', {opacity:0, y:14, filter:'blur(10px)', duration:D(.7), ease:E.out});
+  $('#sheet').innerHTML = `<div style="text-align:center"><div class="kick" style="color:var(--mint)">Confirmed</div><div class="hero big" style="margin:10px 0">Paid.</div><p class="cap">${esc(o.title)}</p></div>`;
+  gsap.from('#sheet .hero', {opacity:0, y:12, duration:D(.5), ease:OUT});
   setTimeout(() => {
     closeSheet();
-    if(o.kind === 'unlock'){ S.unlocked[S.day-1] = true; S.st.files++; S.sel = S.day; award(20, $('#sheet')); if(cnt() === 5) setTimeout(() => { award(100, $('#sheet')); toast('Streak complete: +100 coins'); }, 1400); S.tab = 'case'; swapRender(); toast('File ' + S.day + ' unlocked. +20 coins'); }
-    else if(o.kind === 'reward'){ award(-o.cost, $('#sheet')); S.st.redeemed++; swapRender(); toast('Enjoy. ' + o.cost + ' coins used'); }
-    else if(o.kind === 'ticket'){ S.tickets = S.tickets.filter(t => t.id !== o.tid); S.st.redeemed++; swapRender(); toast('Enjoy'); }
-    else if(o.kind === 'friend'){ const v = S.invites.find(x => x.id === o.vid); v.status = 'came'; S.st.came++; award(100, $('#sheet')); swapRender(); toast(v.name + ' came. +100 coins'); }
-  }, D(0) + 1400);
+    if(o.kind === 'unlock'){ S.unlocked[S.day-1] = true; S.st.files++; S.sel = S.day; award(20, $('#sheet')); if(cnt() === 5) setTimeout(() => { award(100, $('#sheet')); toast('All five chapters: +100 coins'); }, 1300); S.tab = 'case'; render(true); toast('Chapter ' + S.day + ' opened. +20 coins'); }
+    else if(o.kind === 'reward'){ award(-o.cost, $('#sheet')); S.st.redeemed++; render(true); toast('Enjoy. ' + o.cost + ' coins used'); }
+    else if(o.kind === 'ticket'){ S.tickets = S.tickets.filter(t => t.id !== o.tid); S.st.redeemed++; render(true); toast('Enjoy'); }
+    else if(o.kind === 'friend'){ const v = S.invites.find(x => x.id === o.vid); v.status = 'came'; S.st.came++; award(100, $('#sheet')); render(true); toast(v.name + ' came. +100 coins'); }
+  }, D(0) + 1300);
 }
-const swapRender = () => { render(true); };
 
 /* ============ OWNER VIEW (demo data) ============ */
 function ownerView(){
   const o = $('#owner'), st = S.st, sent = 9 + st.invites, came = 4 + st.came;
-  o.innerHTML = `<div class="row"><div class="grow"><div class="kick">Owner view · demo data</div><h3 style="font:600 30px var(--f-head);margin-top:4px">The lunch loop</h3></div><button class="btn sm glass" id="ownerClose">Close</button></div>
-   <div class="grid2"><div class="stat"><b data-c="${st.files + 20}">0</b><span>Files unlocked = paid lunches</span></div><div class="stat"><b data-c="${came}">0</b><span>Colleagues who came</span></div><div class="stat"><b data-c="${sent}">0</b><span>Invites sent</span></div><div class="stat"><b data-c="${6 + st.redeemed}">0</b><span>Rewards redeemed</span></div></div>
+  o.innerHTML = `<div class="row"><div class="grow"><div class="kick">Owner view · demo data</div><h3 style="font:600 28px var(--f-head);margin-top:4px">The lunch loop</h3></div><button class="btn sm glass" id="ownerClose">Close</button></div>
+   <div class="grid2"><div class="stat"><b data-c="${st.files + 20}">0</b><span>Chapters opened = paid lunches</span></div><div class="stat"><b data-c="${came}">0</b><span>Colleagues who came</span></div><div class="stat"><b data-c="${sent}">0</b><span>Invites sent</span></div><div class="stat"><b data-c="${6 + st.redeemed}">0</b><span>Rewards used</span></div></div>
    <div class="card"><div class="kick">Repeat lunchers this week</div>
-     <div class="bl"><span>2+ lunches</span><span class="num">64%</span></div><div class="bar"><i data-w="64"></i></div>
-     <div class="bl"><span>4+ lunches</span><span class="num">31%</span></div><div class="bar"><i data-w="31"></i></div>
-     <div class="bl"><span>All 5 (streak)</span><span class="num">14%</span></div><div class="bar"><i data-w="14"></i></div></div>
+     <div class="bl"><span>2+ lunches</span><span>64%</span></div><div class="bar"><i data-w="64"></i></div>
+     <div class="bl"><span>4+ lunches</span><span>31%</span></div><div class="bar"><i data-w="31"></i></div>
+     <div class="bl"><span>All 5</span><span>14%</span></div><div class="bar"><i data-w="14"></i></div></div>
    <div class="card"><div class="kick">Cost of the 50% invite (placeholder)</div><p class="sub" style="margin-top:6px">${came} meals at up to ₹300 off = up to ₹${(came*300).toLocaleString('en-IN')} given. Compare it with the extra paid orders those colleagues bring back.</p></div>
    <div class="card"><div class="kick">Baseline</div><p class="sub" style="margin-top:6px">All figures are placeholders. Before launch, log 7 days of real 12 to 5 PM orders from Moko's till. Without that, nothing can be proved.</p></div>`;
-  gsap.fromTo(o, {y:phone.clientHeight}, {y:0, duration:D(.7), ease:E.out});
-  $$('[data-c]', o).forEach(n => count(n, +n.dataset.c, {from:0, dur:1.1}));
-  $$('.bar i', o).forEach((b,i) => gsap.to(b, {width:b.dataset.w + '%', duration:D(1), ease:E.out, delay:D(.2 + i*.08)}));
+  gsap.fromTo(o, {y:phone.clientHeight}, {y:0, duration:D(.6), ease:OUT});
+  $$('[data-c]', o).forEach(n => count(n, +n.dataset.c, {from:0, dur:1}));
+  enter2(o);
 }
+function enter2(o){ $$('.bar i', o).forEach((b,i) => gsap.to(b, {width:b.dataset.w + '%', duration:D(1), ease:OUT, delay:D(.2 + i*.06)})); }
 
 /* ============ EVENTS ============ */
 document.addEventListener('click', e => {
@@ -327,25 +304,25 @@ document.addEventListener('click', e => {
   if(t.dataset.p) go(t.dataset.p);
   else if(t.dataset.go) go(t.dataset.go);
   else if(t.dataset.sel){ S.sel = +t.dataset.sel; swap(() => render(true)); }
-  else if(t.dataset.unlock){ if(!lunch()){ toast('Files open at 12:00 PM'); return; } open_({kind:'unlock', title:'File 0' + S.day + ' · ' + CASE.files[S.day-1].t, sub:'Needs a paid lunch order today. Unlocking gives you 20 coins.'}); }
+  else if(t.dataset.unlock){ if(!lunch()){ toast('Chapters open at 12:00 PM'); return; } open_({kind:'unlock', title:'Chapter ' + S.day + ' · ' + CASE.files[S.day-1].t, sub:'Needs a paid lunch order today. Opening it gives you 20 coins.'}); }
   else if(t.dataset.lead){ S.lead = t.dataset.lead; $$('[data-lead]').forEach(b => b.classList.toggle('on', b === t)); const a = $('#accuse'); if(a){ a.disabled = false; } }
-  else if(t.id === 'accuse'){ S.solved = S.lead === CASE.answer ? 'right' : 'wrong'; if(S.solved === 'right') S.tickets.push({id:++tid, title:'Dessert for the table', sub:'Case solved. Needs a ₹500+ order.'}); flash(); award(S.solved === 'right' ? 150 : 50, t); swapRender(); toast(S.solved === 'right' ? 'Case solved. +150 coins' : 'Case closed. +50 coins'); }
+  else if(t.id === 'accuse'){ S.solved = S.lead === CASE.answer ? 'right' : 'wrong'; if(S.solved === 'right') S.tickets.push({id:++tid, title:'Dessert for the table', sub:'Case solved. With a ₹500+ order.'}); flash(); award(S.solved === 'right' ? 150 : 50, t); render(true); toast(S.solved === 'right' ? 'Case solved. +150 coins' : 'Case closed. +50 coins'); }
   else if(t.id === 'mkinv'){ const n = ($('#fname').value || '').replace(/[^\p{L} \-]/gu, '').trim().slice(0,20); if(!n){ gsap.fromTo('#fname', {x:-8}, {x:0, duration:D(.4), ease:'elastic.out(1.2,.3)'}); return; }
-    const sx = Math.random().toString(36).slice(2,5).toUpperCase(); const v = {id:++tid, name:n, code:'MK-' + n.replace(/[^A-Za-z]/g,'').slice(0,4).toUpperCase().padEnd(4,'X') + '-' + sx, status:'waiting'}; S.invites.push(v); S.st.invites++; swapRender(); toast('Invite ready for ' + n); }
+    const sx = Math.random().toString(36).slice(2,5).toUpperCase(); const v = {id:++tid, name:n, code:'MK-' + n.replace(/[^A-Za-z]/g,'').slice(0,4).toUpperCase().padEnd(4,'X') + '-' + sx, status:'waiting'}; S.invites.push(v); S.st.invites++; render(true); toast('Invite ready for ' + n); }
   else if(t.dataset.friend){ const v = S.invites.find(x => x.id == t.dataset.friend); open_({kind:'friend', vid:v.id, title:'Invite code ' + v.code, sub:v.name + ' gets 50% off one lunch meal, up to ₹300. Check the name and the code, then confirm.'}); }
-  else if(t.dataset.rw){ const r = REWARDS[+t.dataset.rw]; open_({kind:'reward', title:r.title, sub:'Needs a ' + r.min + ' paid order.', cost:r.cost}); }
+  else if(t.dataset.rw){ const r = REWARDS[+t.dataset.rw]; open_({kind:'reward', title:r.title, sub:'With a ' + r.min + '+ paid order.', cost:r.cost}); }
   else if(t.dataset.tk){ const tk = S.tickets.find(x => x.id == t.dataset.tk); open_({kind:'ticket', tid:tk.id, title:tk.title, sub:tk.sub}); }
   else if(t.id === 'staffBtn') staffSheet();
   else if(t.id === 'cancelSheet') closeSheet();
   else if(t.dataset.k !== undefined) pinKey(t.dataset.k);
-  else if(t.id === 'ownerClose') gsap.to('#owner', {y:phone.clientHeight, duration:D(.5), ease:E.in});
+  else if(t.id === 'ownerClose') gsap.to('#owner', {y:phone.clientHeight, duration:D(.4), ease:IN});
 });
 $('#scrim').addEventListener('click', closeSheet);
 $('#clockBtns').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if(b) setMode(b.dataset.m); });
 const arrive = src => { S.src = src; S.tab = 'today'; swap(() => render(true)); toast(src === 'nfc' ? 'NFC tap · Bench 4' : 'QR scan · Bench 4'); };
 $('#srcNfc').onclick = () => arrive('nfc'); $('#srcQr').onclick = () => arrive('qr');
 $('#ownerBtn').onclick = ownerView;
-$('#reset').onclick = () => { S = fresh(); tid = 0; app.dataset.mode = 'lunch'; $$('#clockBtns [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === 'lunch')); swap(() => render(true)); };
+$('#reset').onclick = () => { S = fresh(); tid = 0; $$('#clockBtns [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === 'lunch')); swap(() => render(true)); };
 $('#demoToggle').onclick = () => $('#panel').classList.toggle('show');
 const qs = new URLSearchParams(location.search); if(qs.get('src') === 'nfc' || qs.get('src') === 'qr') S.src = qs.get('src');
 render(true);
