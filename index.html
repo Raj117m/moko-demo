@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Moko Afternoon Coins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+<style>
+/* Colours and fonts: from the owner's brief. Shape, motion and the logo companion: from the ATOMZ Face Kit / reel-studio. */
+:root{
+  --bg:#FAF6EE; --card:#F0E8D8; --ink:#1F1916; --muted:#6E635B; --line:#DDD2BD;
+  --cta:#C84B31; --cta-ink:#FFF8EE; --gold:#E5A93B; --live:#16795C; --neon:#2FE59D;
+  --glow:rgba(229,169,59,.0);
+  --f-head:'Bricolage Grotesque',system-ui,sans-serif; --f-body:'Plus Jakarta Sans',system-ui,sans-serif; --f-num:'Space Grotesk',ui-monospace,monospace;
+  --big:24px; --small:6px; --shadow:4px;
+}
+.app[data-mode="evening"],.app[data-mode="closed"]{--bg:#151B18; --card:#1F2823; --ink:#F4EEE2; --muted:#9BA69F; --line:#2B3630; --live:#2FE59D; --glow:rgba(47,229,157,.55);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--f-body);background:#E9E1D0;color:#1F1916;display:flex;align-items:center;justify-content:center;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.stage{display:flex;gap:40px;align-items:center;justify-content:center;width:100%;height:100%;padding:16px}
+.phone{position:relative;width:390px;height:min(844px,100%);border-radius:44px;overflow:hidden;border:10px solid #1F1916;background:#000;flex:none;box-shadow:0 30px 60px rgba(31,25,22,.25)}
+.app{position:absolute;inset:0;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;overflow:hidden;transition:background .4s,color .4s}
+/* header */
+.top{display:flex;align-items:center;gap:10px;padding:14px 16px 8px 64px;min-height:62px;position:relative;z-index:5}
+.brand{font-family:var(--f-head);font-weight:800;font-size:22px;letter-spacing:.02em}
+.pill{font:600 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:var(--live);color:#fff;display:inline-flex;align-items:center;gap:6px}
+.app[data-mode="evening"] .pill,.app[data-mode="closed"] .pill{color:#0c1410}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.chip{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--ink);padding:5px 10px 5px 6px;border-radius:999px;font:700 15px var(--f-num)}
+.coin{width:20px;height:20px;border-radius:50%;background:var(--gold);border:1.5px solid #1F1916;display:inline-block;flex:none;box-shadow:inset -2px -2px 0 rgba(0,0,0,.15)}
+/* pages */
+#pages{position:relative;flex:1;overflow:hidden}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:6px 18px 96px;display:none;scrollbar-width:none}
+.page::-webkit-scrollbar{display:none}
+.page.on{display:block}
+.kicker{font:700 12px var(--f-body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.big{font-family:var(--f-head);font-weight:800;font-size:96px;line-height:.95;letter-spacing:-.02em;margin:6px 0 4px;display:inline-block;
+  background:linear-gradient(100deg,#F3C86A 0%,var(--gold) 30%,var(--cta) 70%,#9b2f1c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 5px 0 rgba(120,30,20,.28)) drop-shadow(0 0 22px var(--glow));transform-origin:0 70%}
+h2{font-family:var(--f-head);font-weight:800;font-size:26px;line-height:1.1;margin:2px 0 6px}
+p.sub{color:var(--muted);font-size:14px;line-height:1.45}
+.card{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--big) var(--small) var(--big) var(--small);box-shadow:var(--shadow) var(--shadow) 0 var(--ink);padding:16px;margin-top:16px}
+.arch{border-radius:999px 999px var(--small) var(--big);padding-top:26px}
+/* signature button: big+small corners on opposite diagonals, hard offset shadow, press = the shadow collapses */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:0 18px;font:700 16px var(--f-body);background:var(--cta);color:var(--cta-ink);
+  border:1.5px solid var(--ink);border-radius:var(--big) var(--small) var(--big) var(--small);box-shadow:var(--shadow) var(--shadow) 0 var(--ink);margin-top:14px;transition:background .25s}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn[disabled]{background:var(--card);color:var(--muted);box-shadow:none;border-color:var(--line);cursor:not-allowed}
+.btn.small{min-height:42px;width:auto;margin:0;padding:0 14px;font-size:14px}
+.row{display:flex;align-items:center;gap:12px}
+.grow{flex:1;min-width:0}
+.num{font-family:var(--f-num);font-weight:700}
+/* ring */
+.ring{position:relative;width:96px;height:96px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.ring .tr{stroke:var(--line)} .ring .pr{stroke:var(--gold);filter:drop-shadow(0 0 5px var(--glow))}
+.app[data-mode="evening"] .ring .pr{stroke:var(--neon)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 22px var(--f-num)}
+/* tabs */
+.tabs{position:absolute;left:12px;right:12px;bottom:12px;display:flex;background:var(--ink);border-radius:999px;padding:5px;z-index:6}
+.tab{flex:1;height:44px;border-radius:999px;font:700 12px var(--f-body);letter-spacing:.04em;color:var(--bg);opacity:.62;transition:background .25s,opacity .25s,color .25s}
+.tab.on{background:var(--gold);color:#1F1916;opacity:1}
+/* game */
+.opt{display:block;width:100%;text-align:left;padding:14px 16px;margin-top:10px;font:600 15px var(--f-body);background:var(--bg);border:1.5px solid var(--ink);border-radius:var(--big) var(--small) var(--big) var(--small)}
+.opt.ok{background:var(--live);color:#fff} .opt.bad{background:var(--cta);color:#fff}
+.dots{display:flex;gap:6px;margin:4px 0 12px}.dots i{flex:1;height:5px;border-radius:9px;background:var(--line)}.dots i.d{background:var(--gold)}
+/* lists */
+.rw{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1.5px dashed var(--line)}
+.rw:first-child{border:0}
+.cost{font:700 14px var(--f-num);background:var(--gold);color:#1F1916;border-radius:999px;padding:4px 10px;display:inline-flex;gap:5px;align-items:center}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:6px}.bar>i{display:block;height:100%;width:0;background:var(--live);border-radius:99px}
+.bar.g>i{background:var(--gold)}
+.team{padding:10px 0}.team.me .tn{font-weight:800}
+.tn{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.badge{font:700 10px var(--f-body);background:var(--gold);color:#1F1916;border-radius:99px;padding:2px 7px;margin-left:6px;letter-spacing:.06em}
+/* overlays */
+.layer{position:absolute;inset:0;pointer-events:none;z-index:20;overflow:hidden}
+#coins i{position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--gold);border:1.5px solid #1F1916}
+#wipe{background:var(--cta);transform:translateX(-110%);z-index:30}
+#flash{background:#FFF8EE;opacity:0;z-index:31}
+#anchor{position:absolute;left:0;top:0;width:44px;z-index:40;pointer-events:none;will-change:transform}
+#anchor img{display:block;width:100%}
+#sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);color:var(--ink);border-top:1.5px solid var(--ink);border-radius:28px 28px 0 0;padding:22px 20px 26px;z-index:25;transform:translateY(105%);pointer-events:auto;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+#sheet.dark{background:#151B18;color:#F4EEE2}
+#scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;z-index:24}
+.code{font:700 40px var(--f-num);letter-spacing:.06em;text-align:center;margin:8px 0 2px}
+.clock{font:500 14px var(--f-num);text-align:center;color:var(--muted)}
+.pin{display:flex;gap:12px;justify-content:center;margin:12px 0}.pin i{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor}.pin i.f{background:var(--neon);border-color:var(--neon);box-shadow:0 0 10px var(--neon)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pad button{height:46px;border-radius:14px;background:#26312B;color:#F4EEE2;font:700 20px var(--f-num)}
+#toast{position:absolute;left:16px;right:16px;top:70px;z-index:26;background:var(--ink);color:var(--bg);border-radius:var(--big) var(--small) var(--big) var(--small);padding:12px 16px;font:600 14px var(--f-body);opacity:0;pointer-events:none}
+/* demo panel + owner view */
+.panel{width:280px;background:#FAF6EE;border:1.5px solid #1F1916;border-radius:24px 6px 24px 6px;box-shadow:4px 4px 0 #1F1916;padding:18px}
+.panel h3{font:800 18px var(--f-head);margin-bottom:2px}.panel p{font-size:12px;color:#6E635B;margin-bottom:10px}
+.panel .g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.panel .g button,.panel .w{padding:10px 8px;border:1.5px solid #1F1916;border-radius:14px 4px 14px 4px;font:700 12px var(--f-body);background:#F0E8D8;box-shadow:3px 3px 0 #1F1916}
+.panel .g button.on{background:#E5A93B}
+.panel .w{width:100%;margin-bottom:10px}
+.panel small{display:block;font-size:11px;color:#6E635B;line-height:1.5}
+#owner{position:absolute;inset:0;background:var(--bg);color:var(--ink);z-index:22;padding:16px 18px 24px;overflow-y:auto;transform:translateY(100%);scrollbar-width:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--big) var(--small) var(--big) var(--small);padding:12px}
+.stat b{display:block;font:700 28px var(--f-num)}.stat span{font-size:11px;color:var(--muted);font-weight:600}
+@media (max-width:860px){.panel{position:fixed;left:8px;right:8px;bottom:8px;width:auto;z-index:99;display:none}.panel.show{display:block}.phone{width:100%;height:100%;border:0;border-radius:0}.stage{padding:0}.demobtn{display:flex!important}}
+.demobtn{display:none;position:fixed;bottom:76px;right:12px;z-index:100;background:#1F1916;color:#FAF6EE;border-radius:99px;padding:8px 12px;font:700 11px var(--f-body)}
+@media (prefers-reduced-motion:reduce){.pill i{animation:none}}
+</style>
+</head>
+<body>
+<button class="demobtn" id="demoToggle">DEMO</button>
+<div class="stage">
+  <div class="phone"><div class="app" id="app" data-mode="afternoon">
+    <div class="top">
+      <span class="brand">MOKO</span><span class="pill" id="pill"><i></i><span id="pillT">3x live</span></span>
+      <div class="chip" id="chip"><span class="coin"></span><span id="bal">0</span></div>
+    </div>
+    <div id="pages">
+      <!-- HOME -->
+      <section class="page" id="p-home">
+        <div data-in class="kicker" id="hk">—</div>
+        <div data-in><div class="big" id="hbig">3x</div></div>
+        <h2 data-in id="hh">—</h2>
+        <p class="sub" data-in id="hs">—</p>
+        <div class="card" data-in id="streak">
+          <div class="row">
+            <div class="ring"><svg viewBox="0 0 100 100"><circle class="tr" cx="50" cy="50" r="42" fill="none" stroke-width="9"/><circle class="pr" id="sring" cx="50" cy="50" r="42" fill="none" stroke-width="9" stroke-linecap="round"/></svg><b id="sn">0/3</b></div>
+            <div class="grow"><h2 style="font-size:19px">3-afternoon streak</h2><p class="sub">Visit 3 afternoons in a week. Bonus: 100 coins.</p></div>
+          </div>
+          <button class="btn" id="checkin">Check in  +25</button>
+        </div>
+        <div class="card arch" data-in id="pass">
+          <div class="kicker" style="text-align:center">Work Pass</div>
+          <h2 style="text-align:center">3 hours at your bench</h2>
+          <p class="sub" style="text-align:center">Pay <span class="num">₹199</span>, all of it goes toward food and drinks. Wi-Fi, a plug and +50 coins.</p>
+          <button class="btn alt" id="passBtn">Ask staff to start a pass</button>
+        </div>
+        <div class="card" data-in id="spill" style="display:none">
+          <div class="kicker">Tonight only</div><h2>Come back tomorrow</h2>
+          <p class="sub">Claim 50 coins. They only work tomorrow, 12 to 5 PM.</p>
+          <button class="btn" id="claim">Claim 50 coins</button>
+        </div>
+      </section>
+      <!-- PLAY -->
+      <section class="page" id="p-play">
+        <div data-in class="kicker">Afternoon trivia</div>
+        <h2 data-in>5 questions. Up to 30 coins.</h2>
+        <div id="gameBox"></div>
+      </section>
+      <!-- WALLET -->
+      <section class="page" id="p-wallet">
+        <div data-in class="kicker">Your coins</div>
+        <div data-in><div class="big" id="wbig" style="font-size:84px">0</div></div>
+        <p class="sub" data-in>Earned today: <span class="num" id="cap">0</span> / 100. Coins expire after 14 days.</p>
+        <div class="bar g" data-in><i id="capbar"></i></div>
+        <p class="sub" id="pend" data-in style="margin-top:8px;display:none"></p>
+        <div class="card" data-in id="rewards"></div>
+        <p class="sub" data-in style="margin-top:12px">Every reward needs a staff confirm and a minimum order. Coins can pay up to 30% of a bill.</p>
+      </section>
+      <!-- LEAGUE -->
+      <section class="page" id="p-league">
+        <div data-in class="kicker">This week · afternoon coins only</div>
+        <h2 data-in>Neighbourhood League</h2>
+        <p class="sub" data-in>Pick your team. Every afternoon coin you earn adds to its score. The winners get a Friday 3 to 5 PM dessert.</p>
+        <div class="row" data-in id="teamPick" style="flex-wrap:wrap;margin-top:12px;gap:8px"></div>
+        <div class="card" data-in id="board"></div>
+      </section>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-p="home">HOME</button><button class="tab" data-p="play">PLAY</button><button class="tab" data-p="wallet">WALLET</button><button class="tab" data-p="league">LEAGUE</button>
+    </div>
+    <div id="toast"></div>
+    <div id="scrim" class="layer"></div>
+    <div id="sheet"></div>
+    <div id="owner"></div>
+    <div id="coins" class="layer"></div>
+    <div id="wipe" class="layer"></div>
+    <div id="flash" class="layer"></div>
+    <div id="anchor"><img src="logo.png" alt=""></div>
+  </div></div>
+
+  <aside class="panel" id="panel">
+    <h3>Demo controls</h3><p>Bench 4 · Moko, below Lodha Amara</p>
+    <div class="g" id="clockBtns"><button data-m="afternoon" class="on">2:00 PM</button><button data-m="evening">8:30 PM</button><button data-m="closed">Closed</button><button id="newday">Next day +1</button></div>
+    <div class="g"><button id="srcNfc">Tap NFC</button><button id="srcQr">Scan QR</button></div>
+    <button class="w" id="ownerBtn">Open owner view</button>
+    <button class="w" id="reset">Reset demo</button>
+    <small>Staff PIN for the demo: <b>1234</b>.<br>Same sticker, two ways in: NFC chip and printed QR, both open <b>moko.app/b/bench-4</b>.<br>All numbers are placeholders until Moko gives real ones.</small>
+  </aside>
+</div>
+
+<script>
+/* ============ MOTION KIT (taken from reel-studio + the AMARA Face Kit) ============
+   curves: arrive = ease-out (.16,1,.3,1) · leave = ease-in (.7,0,.84,0) · logo (.22,1,.36,1) · panel (.25,.9,.25,1)
+   times : instant 100 · state 250 · layout 400 · exits ~75% · lists stagger 50ms, capped at 500ms
+   text  : blur-and-lift in, gentle float, soft lift out (reel kinds7.rise) · pops use back.out(2) (kinds6.pop) · counters power2.out
+   wipe  : coloured sheet in power3.in .24 + out power3.out .3, the logo runs across (kinds2.wipe) · one flash frame on big moments
+   life  : nothing sits still for more than ~2 s: logo hovers 6px/3s, big words breathe 1 to 1.015
+   pages : the logo goes to the incoming edge and pulls the page in; 8 directions, never the same twice in a row */
+gsap.registerPlugin(CustomEase);
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const E = {out:CustomEase.create('mout','.16,1,.3,1'), in:CustomEase.create('min','.7,0,.84,0'), logo:CustomEase.create('mlogo','.22,1,.36,1'), panel:CustomEase.create('mpanel','.25,.9,.25,1')};
+const D = s => RM ? 0 : s;
+const $ = (s, r=document) => r.querySelector(s), $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const app = $('#app'), phone = $('.phone');
+
+/* blur-lift in / soft lift out, then a staggered list (50 ms each, 500 ms max) */
+function liftIn(els, {delay=0, y=34} = {}){
+  els = [].concat(els); const st = Math.min(.05, .5/Math.max(1, els.length));
+  gsap.fromTo(els, {opacity:0, y:RM?0:y, scale:.94, filter:RM?'none':'blur(14px)'}, {opacity:1, y:0, scale:1, filter:'blur(0px)', duration:D(.5), ease:E.out, stagger:st, delay, clearProps:'filter,transform'});
+}
+const liftOut = (els, cb) => gsap.to(els, {opacity:0, y:RM?0:-30, filter:RM?'none':'blur(8px)', duration:D(.35), ease:E.in, onComplete:cb});
+const popIn = (el, d=.45) => gsap.fromTo(el, {scale:.4, opacity:0}, {scale:1, opacity:1, duration:D(d), ease:'back.out(2)'});
+function count(el, to, {from=null, dur=.8, pre='', suf=''} = {}){
+  const cur = from ?? (parseFloat(el.dataset.v) || 0); const o = {v:cur}; el.dataset.v = to;
+  gsap.to(o, {v:to, duration:D(dur), ease:'power2.out', onUpdate:()=>{el.textContent = pre + Math.round(o.v).toLocaleString('en-IN') + suf}, onComplete:()=>{el.textContent = pre + Math.round(to).toLocaleString('en-IN') + suf}});
+}
+/* every press answers in 100 ms; the hard shadow collapses, then springs back */
+document.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.btn,.opt,.panel button,.tab'); if(!b || b.disabled) return;
+  gsap.to(b, {scale:.96, duration:D(.1), ease:E.out});
+  if(b.classList.contains('btn')) gsap.to(b, {boxShadow:'0px 0px 0 #1F1916', x:3, y:3, duration:D(.1)});
+});
+const release = e => { $$('.btn,.opt,.panel button,.tab').forEach(b => { if(gsap.getProperty(b,'scale')<1){ gsap.to(b,{scale:1, x:0, y:0, boxShadow:'4px 4px 0 var(--ink)', duration:D(.45), ease:'back.out(3)', clearProps:'boxShadow,x,y'}); }}); };
+document.addEventListener('pointerup', release); document.addEventListener('pointercancel', release);
+
+/* breathing: big words and the coin chip never sit dead still */
+function breathe(){ gsap.killTweensOf('.big,#chip .coin'); if(RM) return; gsap.to('.big', {scale:1.015, duration:2.4, yoyo:true, repeat:-1, ease:'sine.inOut'}); gsap.to('#chip .coin', {rotation:12, duration:1.8, yoyo:true, repeat:-1, ease:'sine.inOut'}); }
+
+/* ============ THE LOGO COMPANION (face-kit/anchor.js behaviour) ============ */
+const anchor = (() => {
+  const el = $('#anchor'), SIZE = 44, home = {x:12, y:12}; let pos = {...home}, cur = null, t = null;
+  const place = p => { el.style.transform = `translate(${p.x}px,${p.y}px)`; pos = {x:p.x, y:p.y}; };
+  place(home);
+  if(!RM) $('img', el).animate([{transform:'translateY(-6px)'},{transform:'translateY(6px)'},{transform:'translateY(-6px)'}], {duration:3000, iterations:Infinity, easing:'ease-in-out'});
+  const rel = r => { const p = phone.getBoundingClientRect(), b = phone.clientLeft; return {x:r.left - p.left - b, y:r.top - p.top - b, w:r.width, h:r.height}; };
+  /* the logo runs across the screen pulling the wipe sheet (reel wipe, 0.55 s), then goes home */
+  function run(){ clearTimeout(t); cur?.cancel(); const y = phone.clientHeight*.42; const a = el.animate([{transform:`translate(-90px,${y}px) rotate(-12deg)`},{transform:`translate(${phone.clientWidth+40}px,${y}px) rotate(10deg)`}], {duration:550, easing:'cubic-bezier(.45,0,.55,1)'}); a.onfinish = () => place(home); }
+  function flyTo(x, y, dur=450){
+    if(RM){ place({x,y}); return Promise.resolve(); }
+    cur?.cancel(); const s = pos, dx = x - s.x, dy = y - s.y;
+    const mx = s.x + dx/2 - dy*.18, my = s.y + dy/2 + dx*.18 - 30, bank = Math.max(-12, Math.min(12, dx*.03));
+    const a = el.animate([{transform:`translate(${s.x}px,${s.y}px) rotate(0deg)`,offset:0},{transform:`translate(${mx}px,${my}px) rotate(${bank}deg)`,offset:.5},{transform:`translate(${x}px,${y}px) rotate(0deg)`,offset:1}], {duration:dur, easing:'cubic-bezier(.22,1,.36,1)', fill:'forwards'});
+    cur = a; return a.finished.then(() => { place({x,y}); a.cancel(); cur = null; }).catch(()=>{});
+  }
+  function pop(big=false){ if(RM) return; const tr = el.style.transform, k = big ? 1.3 : 1.12; el.animate([{transform:`${tr} scale(1)`},{transform:`${tr} scale(${k}) rotate(${big?-8:0}deg)`},{transform:`${tr} scale(1)`}], {duration:big?400:250, easing:'cubic-bezier(.16,1,.3,1)'}); }
+  const goHome = (d=1200) => { clearTimeout(t); t = setTimeout(() => flyTo(home.x, home.y, 450), d); };
+  function visit(target, big=false){ clearTimeout(t); const r = rel(target.getBoundingClientRect()); let x = Math.max(4, r.x - SIZE - 6), y = r.y + r.h/2 - SIZE*.36; if(r.x - SIZE - 6 < 4){ x = r.x + r.w - SIZE/2; y = r.y - SIZE*.6; } return flyTo(x, y, 450).then(() => { pop(big); goHome(); }); }
+  function toEdge(dir){ clearTimeout(t); const W = phone.clientWidth, H = phone.clientHeight; return flyTo(dir.x < 0 ? 6 : dir.x > 0 ? W - SIZE - 6 : W/2 - SIZE/2, dir.y < 0 ? 70 : dir.y > 0 ? H - SIZE - 80 : H/2, 350).then(()=>goHome(500)); }
+  return {visit, flyTo, pop, goHome, toEdge, run, el};
+})();
+
+/* ============ STATE ============ */
+const KEY = 'moko-demo-v1';
+const fresh = () => ({mode:'afternoon', bal:20, earned:0, streak:1, checked:false, played:false, pending:0, claimed:false, team:0, page:'home', src:'qr', dir:0, pass:false, redeemed:0, owner:{covers:38}});
+let S = fresh();
+try { const j = JSON.parse(localStorage.getItem(KEY)); if(j) S = Object.assign(fresh(), j); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
+const TEAMS = [{n:'Amara residents', s:1240},{n:'Nearby society', s:980},{n:'Office park staff', s:760},{n:'College crew', s:540}];
+const REWARDS = [{n:'Free filter coffee', c:50, min:200},{n:'Fries on the house', c:40, min:200},{n:'Secret afternoon dish', c:60, min:149, extra:'+ ₹149'}];
+const CAP = 100, afternoon = () => S.mode === 'afternoon';
+
+/* ============ MODES + THE SHEET WIPE (kinds2.wipe: sheet in .24 power3.in, out .3 power3.out, logo runs across) ============ */
+function setMode(m, instant){
+  const apply = () => { S.mode = m; app.dataset.mode = m; $$('#clockBtns [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === m)); if(m === 'afternoon' && S.pending){ S.bal += S.pending; toast(`Last night's ${S.pending} coins are live`); S.pending = 0; } if(m === 'evening'){ S.claimed = false; } renderAll(); show(S.page, true); breathe(); save(); };
+  if(instant || RM){ apply(); return; }
+  const wp = $('#wipe'), tl = gsap.timeline();
+  tl.set(wp, {x:'-110%'}).to(wp, {x:'0%', duration:.24, ease:'power3.in'}).add(apply, '>').to(wp, {x:'110%', duration:.3, ease:'power3.out'});
+  anchor.run();
+}
+
+/* ============ PAGES: the logo pulls the new page from the incoming edge, 8 directions, never the same twice ============ */
+const DIRS = [{x:-1,y:0},{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:-1},{x:1,y:-1},{x:1,y:1},{x:-1,y:1}];
+let busy = false;
+function show(id, first){
+  const next = $('#p-' + id), prev = $('.page.on');
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.p === id)); S.page = id;
+  renderPage(id);
+  const enter = () => { next.classList.add('on'); liftIn($$('[data-in]', next)); next.scrollTop = 0; setupReveal(next); };
+  if(first || !prev || prev === next || RM){ if(prev && prev !== next) prev.classList.remove('on'); enter(); return; }
+  if(busy) return; busy = true;
+  const d = DIRS[S.dir++ % 8]; anchor.toEdge(d);
+  next.classList.add('on'); next.style.zIndex = 2; prev.style.zIndex = 1;
+  gsap.fromTo(next, {xPercent:d.x*100, yPercent:d.y*100, opacity:1}, {xPercent:0, yPercent:0, duration:.4, ease:E.out, clearProps:'transform,zIndex'});
+  gsap.to(prev, {xPercent:-d.x*40, yPercent:-d.y*40, opacity:0, duration:.3, ease:E.in, onComplete:()=>{ prev.classList.remove('on'); gsap.set(prev, {clearProps:'all'}); busy = false; }});
+  liftIn($$('[data-in]', next), {delay:.12}); next.scrollTop = 0; setupReveal(next);
+}
+/* scrolling: cards that come into view blur-lift in (no parallax, no shake: the reel owner asked for a calm frame) */
+function setupReveal(page){ if(RM) return; const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ io.unobserve(e.target); if(!e.target.dataset.seen){ e.target.dataset.seen=1; liftIn(e.target,{y:24}); } } }), {root:page, threshold:.15});
+  $$('[data-in]', page).forEach(el => { const r = el.getBoundingClientRect(), pr = page.getBoundingClientRect(); if(r.top > pr.bottom - 20){ gsap.set(el, {opacity:0}); io.observe(el); } else el.dataset.seen = 1; }); }
+
+/* ============ RENDER ============ */
+function tickRing(){ const c = 2*Math.PI*42, r = $('#sring'); r.style.strokeDasharray = c; gsap.to(r, {strokeDashoffset:c*(1 - Math.min(1, S.streak/3)), duration:D(.9), ease:E.out}); $('#sn').textContent = Math.min(S.streak,3) + '/3'; }
+function renderAll(){
+  const m = S.mode, pill = $('#pill'), t = $('#pillT');
+  t.textContent = m === 'afternoon' ? '3x live' : m === 'evening' ? 'Evening' : 'Closed';
+  pill.style.background = m === 'afternoon' ? '' : (m === 'evening' ? 'var(--live)' : '#9BA69F');
+  $('#bal').dataset.v = S.bal; $('#bal').textContent = S.bal;
+  $('#hk').textContent = `Bench 4 · via ${S.src.toUpperCase()}${m==='afternoon'?' · 12 to 5 PM':''}`;
+  const big = $('#hbig'), h = $('#hh'), s = $('#hs');
+  if(m === 'afternoon'){ big.textContent = '3x'; h.textContent = 'Afternoon coins are live'; s.textContent = 'Coins are worth more until 5 PM. Check in, play, then spend them on food and drinks.'; }
+  else if(m === 'evening'){ big.textContent = '+50'; h.textContent = 'Tomorrow, 12 to 5 PM'; s.textContent = 'Busy tonight. Claim 50 coins and spend them on a calm afternoon here.'; }
+  else { big.textContent = '12:00'; h.textContent = 'See you at noon'; s.textContent = 'Your coins are safe. Afternoon mode starts at 12 PM.'; }
+  $('#streak').style.display = afternoon() ? '' : 'none'; $('#pass').style.display = afternoon() ? '' : 'none'; $('#spill').style.display = m === 'evening' ? '' : 'none';
+  const ci = $('#checkin'); ci.disabled = S.checked; ci.textContent = S.checked ? 'Checked in today ✓' : 'Check in  +25';
+  const pb = $('#passBtn'); pb.textContent = S.pass ? 'Pass active · 2:59:41 left' : 'Ask staff to start a pass';
+  const cl = $('#claim'); cl.disabled = S.claimed; cl.textContent = S.claimed ? 'Claimed ✓ see you tomorrow' : 'Claim 50 coins';
+  tickRing();
+}
+function renderPage(id){
+  if(id === 'play') renderGame();
+  if(id === 'wallet'){
+    $('#wbig').textContent = S.bal; $('#wbig').dataset.v = S.bal;
+    $('#cap').textContent = S.earned; gsap.to('#capbar', {width:Math.min(100, S.earned/CAP*100)+'%', duration:D(.8), ease:E.out});
+    const p = $('#pend'); p.style.display = S.pending ? '' : 'none'; p.textContent = `+${S.pending} coins waiting for tomorrow at 12 PM`;
+    $('#rewards').innerHTML = REWARDS.map((r,i) => { const ok = afternoon() && S.bal >= r.c; return `<div class="rw"><div class="grow"><b>${r.n}</b><div class="sub" style="font-size:12px;color:var(--muted)">Needs ₹${r.min}+ order ${r.extra?'· '+r.extra:''}</div></div><span class="cost"><span class="coin" style="width:14px;height:14px"></span>${r.c}</span><button class="btn small" data-rw="${i}" ${ok?'':'disabled'}>${afternoon()?'Redeem':'Afternoon'}</button></div>`; }).join('');
+  }
+  if(id === 'league'){
+    $('#teamPick').innerHTML = TEAMS.map((t,i) => `<button class="btn small alt" data-team="${i}" style="${i===S.team?'background:var(--gold);color:#1F1916':''}">${t.n}</button>`).join('');
+    const rows = TEAMS.map((t,i) => ({...t, s:t.s + (i===S.team ? S.earned : 0), me:i===S.team})).sort((a,b) => b.s - a.s), mx = rows[0].s;
+    $('#board').innerHTML = rows.map((t,i) => `<div class="team ${t.me?'me':''}"><div class="tn"><span>${t.n}${i===0?'<span class="badge">#1</span>':''}${t.me?'<span class="badge" style="background:var(--live);color:#fff">YOU</span>':''}</span><span class="num" data-n="${t.s}">0</span></div><div class="bar ${t.me?'g':''}"><i data-w="${t.s/mx*100}"></i></div></div>`).join('');
+    $$('#board .bar i').forEach((b,i) => gsap.to(b, {width:b.dataset.w+'%', duration:D(.9), ease:E.out, delay:D(.15+i*.05)}));
+    $$('#board [data-n]').forEach(n => count(n, +n.dataset.n, {from:0, dur:.9}));
+  }
+}
+
+/* ============ GAME ============ */
+const QS = [
+  {q:'Which spice gives biryani its golden colour?', o:['Saffron','Cumin','Clove','Cardamom'], a:0},
+  {q:'How many players does one cricket team field?', o:['9','10','11','12'], a:2},
+  {q:'Which city is called the City of Dreams?', o:['Delhi','Mumbai','Pune','Chennai'], a:1},
+  {q:'Idli batter is made from rice and which dal?', o:['Chana','Moong','Toor','Urad'], a:3},
+  {q:'Masala chai is milk, tea leaves and what else?', o:['Spices','Soda','Cocoa','Honey'], a:0},
+];
+let G = null;
+function renderGame(){
+  const box = $('#gameBox');
+  if(!afternoon()){ box.innerHTML = `<div class="card" data-in><h2>Games open 12 to 5 PM</h2><p class="sub">Come back tomorrow afternoon. Tonight's coins are waiting on the Home tab.</p></div>`; return; }
+  if(S.played){ box.innerHTML = `<div class="card" data-in><h2>Done for today</h2><p class="sub">You played today's round. A new one opens tomorrow afternoon.</p></div>`; return; }
+  G = {i:0, score:0}; box.innerHTML = `<div class="card arch" data-in><div class="kicker" style="text-align:center">Round</div><h2 style="text-align:center">Ready?</h2><p class="sub" style="text-align:center">12 seconds a question. 6 coins for each right answer.</p><button class="btn" id="startGame">Start</button></div>`;
+}
+let qTimer = null;
+function question(){
+  const box = $('#gameBox'), q = QS[G.i], c = 2*Math.PI*42;
+  box.innerHTML = `<div class="dots">${QS.map((_,i)=>`<i class="${i<G.i?'d':''}"></i>`).join('')}</div>
+   <div class="card" id="qc"><div class="row"><div class="ring" style="width:64px;height:64px"><svg viewBox="0 0 100 100"><circle class="tr" cx="50" cy="50" r="42" fill="none" stroke-width="10"/><circle class="pr" id="tring" cx="50" cy="50" r="42" fill="none" stroke-width="10" stroke-linecap="round" style="stroke-dasharray:${c}"/></svg><b id="tn" style="font-size:18px">12</b></div><h2 class="grow" style="font-size:19px" id="qt">${q.q}</h2></div>
+   ${q.o.map((o,i)=>`<button class="opt" data-o="${i}">${o}</button>`).join('')}</div>`;
+  liftIn($('#qt')); liftIn($$('.opt', box), {delay:.1, y:20}); popIn('#qc', .35);
+  const o = {t:12}; gsap.killTweensOf(o);
+  qTimer = gsap.to(o, {t:0, duration:12, ease:'none', onUpdate:()=>{ const r = $('#tring'); if(!r) return; r.style.strokeDashoffset = c*(1 - o.t/12); $('#tn').textContent = Math.ceil(o.t); }, onComplete:()=>answer(-1)});
+}
+function answer(i){
+  if(!G || G.lock) return; G.lock = true; qTimer && qTimer.kill();
+  const q = QS[G.i], opts = $$('.opt'); const ok = i === q.a;
+  if(i >= 0){ opts[i].classList.add(ok?'ok':'bad'); }
+  opts[q.a].classList.add('ok');
+  if(ok){ G.score++; gsap.fromTo(opts[i], {scale:.96}, {scale:1, duration:D(.5), ease:'back.out(3)'}); anchor.visit(opts[i]); }
+  else if(i >= 0){ gsap.fromTo(opts[i], {x:-10}, {x:0, duration:D(.55), ease:'elastic.out(1.2,.3)'}); }
+  setTimeout(() => { G.i++; G.lock = false; if(G.i < QS.length) question(); else finishGame(); }, D(0) + 900);
+}
+function finishGame(){
+  const earn = G.score*6; S.played = true; const box = $('#gameBox');
+  box.innerHTML = `<div class="card arch" style="text-align:center"><div class="kicker">${G.score} of 5 right</div><div class="big" id="gbig" style="font-size:88px">+0</div><p class="sub">Coins added to your wallet.</p><button class="btn" id="toWallet">See my wallet</button></div>`;
+  popIn('.card', .45); flash(); const gb = $('#gbig'); count(gb, earn, {from:0, dur:.9, pre:'+'}); breathe();
+  setTimeout(() => award(earn, gb), D(350)); anchor.pop(true); save();
+}
+
+/* ============ COINS: burst from the thing that earned them to the wallet chip, arc by two offset eases, counter ticks ============ */
+function award(n, from){
+  if(n <= 0) return; const room = Math.max(0, CAP - S.earned); n = Math.min(n, room);
+  if(n <= 0){ toast('Daily cap reached (100 coins)'); return; }
+  const pr = phone.getBoundingClientRect(), fr = from.getBoundingClientRect(), tr = $('#chip .coin').getBoundingClientRect();
+  const sx = fr.left + fr.width/2 - pr.left - 10, sy = fr.top + fr.height/2 - pr.top - 10, tx = tr.left - pr.left - 10, ty = tr.top - pr.top - 10;
+  const k = Math.min(9, Math.max(3, Math.round(n/5)));
+  for(let j = 0; j < k; j++){
+    const c = document.createElement('i'); $('#coins').appendChild(c);
+    gsap.set(c, {x:sx, y:sy, scale:0}); const dl = D(j*.05);
+    gsap.to(c, {scale:1, duration:D(.2), delay:dl, ease:'back.out(2)'});
+    gsap.to(c, {x:tx, duration:D(.7), delay:dl, ease:'power1.in'}); gsap.to(c, {y:ty, duration:D(.7), delay:dl, ease:'power3.out', onComplete:()=>{ c.remove(); if(j===k-1) landed(n); }});
+  }
+  if(RM) landed(n);
+}
+function landed(n){ S.bal += n; S.earned += n; count($('#bal'), S.bal, {dur:.7}); const w = $('#wbig'); if(w) count(w, S.bal, {dur:.7}); gsap.fromTo('#chip', {scale:1.18}, {scale:1, duration:D(.5), ease:'back.out(3)'}); save(); }
+function flash(){ if(RM) return; gsap.fromTo('#flash', {opacity:.8}, {opacity:0, duration:.18, ease:'power1.out'}); }
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; gsap.killTweensOf(t); gsap.fromTo(t, {opacity:0, y:-20, filter:RM?'none':'blur(8px)'}, {opacity:1, y:0, filter:'blur(0px)', duration:D(.4), ease:E.out}); clearTimeout(toastT); toastT = setTimeout(() => gsap.to(t, {opacity:0, y:-14, duration:D(.3), ease:E.in}), 2400); }
+
+/* ============ REDEEM: guest code, then staff PIN. The sheet moves on the panel curve ============ */
+let clockT, rwIdx = null, pin = '';
+function openSheet(html, dark){ const sh = $('#sheet'); sh.className = dark ? 'dark' : ''; sh.innerHTML = html; gsap.to('#scrim', {opacity:1, duration:D(.25)}); $('#scrim').style.pointerEvents = 'auto'; gsap.fromTo(sh, {yPercent:105}, {yPercent:0, duration:D(.4), ease:E.panel}); liftIn($$('#sheet [data-s]'), {delay:.1, y:18}); }
+function closeSheet(){ clearInterval(clockT); gsap.to('#sheet', {yPercent:105, duration:D(.3), ease:E.in}); gsap.to('#scrim', {opacity:0, duration:D(.25)}); $('#scrim').style.pointerEvents = 'none'; }
+function guestSheet(i){
+  rwIdx = i; pin = ''; const r = REWARDS[i], code = 'MK-' + (4000 + Math.floor(Math.random()*5999));
+  openSheet(`<div class="kicker" data-s>Show this to staff</div><div class="code" data-s>${code}</div><div class="clock" data-s id="clk"></div>
+   <div class="card" data-s style="margin-top:14px"><b>${r.n}</b><p class="sub">${r.c} coins · needs a ₹${r.min}+ order${r.extra?' · '+r.extra:''}. Coins cover at most 30% of the bill.</p></div>
+   <button class="btn" id="staffBtn" data-s>Staff: confirm</button><button class="btn alt" id="cancelSheet" data-s>Cancel</button>`);
+  const t = () => { $('#clk') && ($('#clk').textContent = new Date().toLocaleTimeString('en-IN')); }; t(); clockT = setInterval(t, 1000);
+}
+function staffSheet(){
+  pin = ''; clearInterval(clockT);
+  $('#sheet').className = 'dark';
+  $('#sheet').innerHTML = `<div class="kicker" style="color:#9BA69F">Staff confirm</div><h2 style="color:#F4EEE2">Enter the staff PIN</h2><div class="pin" id="pinDots" style="color:#9BA69F"><i></i><i></i><i></i><i></i></div>
+   <div class="pad">${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<button data-k="${k}" ${k===''?'style="visibility:hidden"':''}>${k}</button>`).join('')}</div>`;
+  liftIn($$('#sheet .kicker,#sheet h2,#sheet .pin,#sheet .pad'), {y:16});
+}
+function pinKey(k){
+  if(k === '⌫') pin = pin.slice(0,-1); else if(pin.length < 4) pin += k;
+  $$('#pinDots i').forEach((d,i) => d.classList.toggle('f', i < pin.length));
+  if(pin.length === 4){
+    if(pin === '1234') confirmRedeem();
+    else { gsap.fromTo('#pinDots', {x:-12}, {x:0, duration:D(.55), ease:'elastic.out(1.2,.3)'}); pin = ''; setTimeout(() => $$('#pinDots i').forEach(d => d.classList.remove('f')), 250); }
+  }
+}
+function confirmRedeem(){
+  const r = REWARDS[rwIdx]; S.bal -= r.c; S.redeemed++; save(); flash();
+  $('#sheet').innerHTML = `<div style="text-align:center;color:#F4EEE2"><div class="kicker" style="color:#9BA69F">Confirmed</div><div class="big" id="okbig" style="font-size:72px">✓</div><h2>${r.n}</h2><p class="sub" style="color:#9BA69F">${r.c} coins used. Enjoy.</p></div>`;
+  popIn('#okbig', .5); anchor.visit($('#sheet'), true); count($('#bal'), S.bal, {dur:.7}); gsap.fromTo('#chip', {scale:.9}, {scale:1, duration:D(.5), ease:'back.out(3)'});
+  setTimeout(() => { closeSheet(); renderPage('wallet'); liftIn($$('#p-wallet [data-in]')); }, D(0) + 1500);
+}
+
+/* ============ OWNER VIEW (demo data) ============ */
+function ownerView(){
+  const o = $('#owner'); const base = 22, now = S.owner.covers + S.redeemed;
+  o.innerHTML = `<div class="row" style="padding-left:46px"><div class="grow"><div class="kicker">Owner view · demo data</div><h2>Today, 12 to 5 PM</h2></div><button class="btn small alt" id="ownerClose">Close</button></div>
+   <div class="grid2" style="margin-top:12px">
+    <div class="stat" data-o><b data-c="${now}">0</b><span>Afternoon covers (usual ${base})</span></div>
+    <div class="stat" data-o><b data-c="${1420 + S.earned}">0</b><span>Coins issued</span></div>
+    <div class="stat" data-o><b data-c="${610 + S.redeemed*50}">0</b><span>Coins redeemed</span></div>
+    <div class="stat" data-o><b data-c="${6 + (S.pass?1:0)}">0</b><span>Work Passes sold</span></div></div>
+   <div class="card" data-o><div class="kicker">How guests arrived</div>
+    <div class="tn" style="margin-top:8px"><span>NFC tap</span><span class="num">58%</span></div><div class="bar"><i data-w="58"></i></div>
+    <div class="tn" style="margin-top:8px"><span>QR scan</span><span class="num">42%</span></div><div class="bar g"><i data-w="42"></i></div></div>
+   <div class="card" data-o><div class="kicker">Busiest benches</div>
+    ${[['Bench 4',92],['Corner booth 2',71],['Bench 1',55],['Window bench 3',38]].map(b=>`<div class="tn" style="margin-top:8px"><span>${b[0]}</span><span class="num">${b[1]}</span></div><div class="bar"><i data-w="${b[1]}"></i></div>`).join('')}</div>
+   <div class="card" data-o><div class="kicker">Evening to afternoon</div><h2 style="font-size:20px"><span class="num" data-c="9">0</span> guests came back from last night's claim</h2></div>`;
+  gsap.killTweensOf(o); gsap.fromTo(o, {yPercent:0, y:phone.clientHeight}, {y:0, duration:D(.4), ease:E.out});
+  liftIn($$('[data-o]', o), {delay:.15});
+  $$('[data-c]', o).forEach(n => count(n, +n.dataset.c, {from:0, dur:1}));
+  $$('.bar i', o).forEach((b,i) => gsap.to(b, {width:b.dataset.w+'%', duration:D(.9), ease:E.out, delay:D(.2+i*.05)}));
+}
+const closeOwner = () => gsap.to('#owner', {y:phone.clientHeight, duration:D(.3), ease:E.in});
+
+/* ============ EVENTS ============ */
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if(b && b.dataset.p !== S.page) show(b.dataset.p); });
+document.addEventListener('click', e => {
+  const t = e.target;
+  if(t.id === 'checkin' && !S.checked){ S.checked = true; renderAll(); anchor.visit(t, true); flash(); award(25, t); toast('Checked in. Streak day ' + S.streak); }
+  else if(t.id === 'claim'){ S.claimed = true; S.pending = 50; renderAll(); anchor.visit(t, true); flash(); toast('50 coins saved for tomorrow, 12 to 5 PM'); save(); }
+  else if(t.id === 'passBtn'){ S.pass = true; renderAll(); anchor.visit(t, true); flash(); toast('Pass started. +50 coins'); setTimeout(() => award(50, t), 200); }
+  else if(t.id === 'startGame'){ question(); }
+  else if(t.dataset.o !== undefined && t.classList.contains('opt')){ answer(+t.dataset.o); }
+  else if(t.id === 'toWallet'){ show('wallet'); }
+  else if(t.dataset.rw !== undefined && !t.disabled){ guestSheet(+t.dataset.rw); }
+  else if(t.id === 'staffBtn'){ staffSheet(); }
+  else if(t.id === 'cancelSheet' || t.id === 'scrim'){ closeSheet(); }
+  else if(t.dataset.k !== undefined){ pinKey(t.dataset.k); }
+  else if(t.dataset.team !== undefined){ S.team = +t.dataset.team; save(); renderPage('league'); anchor.visit(t); }
+  else if(t.id === 'ownerClose'){ closeOwner(); }
+});
+$('#scrim').addEventListener('click', closeSheet);
+$('#clockBtns').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if(b && b.dataset.m !== S.mode) setMode(b.dataset.m); if(e.target.id === 'newday'){ S.streak = Math.min(3, S.streak+1); S.checked = false; S.played = false; S.earned = 0; if(S.streak === 3){ toast('Streak done: +100 coins'); S.bal += 100; } renderAll(); renderPage(S.page); save(); } });
+const arrive = src => { S.src = src; S.page = 'home'; renderAll(); show('home', true); anchor.flyTo(160, 90, 500).then(() => { anchor.pop(); anchor.goHome(600); }); toast(src === 'nfc' ? 'NFC tap: Bench 4' : 'QR scan: Bench 4'); };
+$('#srcNfc').onclick = () => arrive('nfc'); $('#srcQr').onclick = () => arrive('qr');
+$('#ownerBtn').onclick = () => { ownerView(); };
+$('#reset').onclick = () => { S = fresh(); try{ localStorage.removeItem(KEY); }catch(e){} setMode('afternoon', true); show('home', true); };
+$('#demoToggle').onclick = () => $('#panel').classList.toggle('show');
+
+/* ============ START ============ */
+const qs = new URLSearchParams(location.search); if(qs.get('src') === 'nfc' || qs.get('src') === 'qr') S.src = qs.get('src');
+app.dataset.mode = S.mode; renderAll(); show('home', true); breathe();
+</script>
+</body>
+</html>
