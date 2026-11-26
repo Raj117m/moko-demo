@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Moko Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=Fraunces:ital,opsz,wght@1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+<style>
+/* v2 look: editorial grid, condensed caps, hairlines, hard cuts. Colours and fonts are Moko's own brief. */
+:root{
+  --bg:#FAF6EE; --ink:#1F1916; --muted:#6E635B; --line:rgba(31,25,22,.2); --soft:rgba(31,25,22,.05);
+  --cta:#C84B31; --cta-ink:#FFF8EE; --gold:#E5A93B; --live:#16795C; --big:#C84B31; --node:#C84B31;
+  --f-head:'Bricolage Grotesque',system-ui,sans-serif; --f-body:'Plus Jakarta Sans',system-ui,sans-serif; --f-mono:'Space Grotesk',ui-monospace,monospace; --f-serif:'Fraunces',Georgia,serif;
+}
+.app[data-mode="evening"]{--bg:#151B18; --ink:#F4EEE2; --muted:#9BA69F; --line:rgba(244,238,226,.2); --soft:rgba(244,238,226,.05); --live:#2FE59D; --big:#E5A93B; --node:#2FE59D;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--f-body);background:#E9E1D0;color:#1F1916;display:flex;align-items:center;justify-content:center;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.stage{display:flex;gap:40px;align-items:center;justify-content:center;width:100%;height:100%;padding:16px}
+.phone{position:relative;width:390px;height:min(844px,100%);border-radius:36px;overflow:hidden;border:7px solid #0d0f0e;background:#000;flex:none;box-shadow:0 30px 70px rgba(31,25,22,.28)}
+.app{position:absolute;inset:0;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;overflow:hidden}
+.app,.app *{transition:background-color .01s}
+/* grid layer */
+#grid{position:absolute;inset:0;pointer-events:none;z-index:0}
+.gl{position:absolute;background:repeating-linear-gradient(var(--dir,90deg),var(--line) 0 4px,transparent 4px 8px)}
+.gl-v{top:0;bottom:0;width:1px;--dir:180deg;transform-origin:50% 0}
+.gl-h{left:0;right:0;height:1px;--dir:90deg;transform-origin:0 50%}
+.node{position:absolute;width:5px;height:5px;margin:-2px 0 0 -2px;background:var(--node)}
+/* header */
+.top{position:relative;z-index:5;display:flex;align-items:center;gap:10px;padding:14px 18px 10px;border-bottom:1px solid var(--line)}
+.brand{font:800 22px var(--f-head);font-stretch:75%;font-variation-settings:'wdth' 75;letter-spacing:.04em;text-transform:uppercase}
+.live{font:700 10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:6px;color:var(--live)}
+.live i{width:6px;height:6px;background:var(--live);animation:blink 1.4s steps(2,jump-none) infinite}
+@keyframes blink{50%{opacity:.15}}
+.chip{margin-left:auto;display:flex;align-items:center;gap:7px;border:1px solid var(--ink);padding:5px 9px;font:700 14px var(--f-mono)}
+.coin{width:9px;height:9px;background:var(--gold);display:inline-block;transform:rotate(45deg)}
+/* ticker */
+.tick{position:relative;z-index:5;overflow:hidden;border-bottom:1px solid var(--line);white-space:nowrap;font:500 10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:6px 0}
+.tick div{display:inline-block;animation:mq 22s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* page */
+#pages{position:relative;z-index:2;flex:1;overflow:hidden}
+#page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:18px 18px 90px;scrollbar-width:none}
+#page::-webkit-scrollbar{display:none}
+.kick{font:500 11px var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.mask{display:block;overflow:hidden;padding-bottom:.06em}
+.hero{font-family:var(--f-head);font-weight:800;font-variation-settings:'wdth' 75;font-stretch:75%;font-size:88px;line-height:.86;letter-spacing:-.005em;text-transform:uppercase;color:var(--big);margin:10px 0 8px}
+.hero.sm{font-size:64px}
+.ital{font:italic 400 19px/1.25 var(--f-serif);color:var(--ink)}
+.sub{font-size:13px;line-height:1.5;color:var(--muted)}
+.card{position:relative;border:1px solid var(--ink);padding:16px 16px 18px;margin-top:18px;background:transparent}
+.card::before,.card::after{content:"";position:absolute;width:7px;height:7px;background:var(--node)}
+.card::before{left:-4px;top:-4px}.card::after{right:-4px;bottom:-4px}
+.card h3{font-family:var(--f-head);font-weight:800;font-variation-settings:'wdth' 75;text-transform:uppercase;font-size:30px;line-height:.92;margin:6px 0 8px}
+.card.dim{border-style:dashed;border-color:var(--line)}
+.num{font-family:var(--f-mono);font-weight:700}
+.bign{font-family:var(--f-head);font-weight:800;font-variation-settings:'wdth' 75;font-size:64px;line-height:.9;color:var(--big)}
+.btn{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:50px;padding:0 16px;margin-top:14px;font:700 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;background:var(--cta);color:var(--cta-ink);border:1px solid var(--cta)}
+.btn.alt{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn.sm{width:auto;min-height:38px;margin:0;padding:0 12px;font-size:11px}
+.btn[disabled]{background:transparent;color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chipb{padding:9px 12px;border:1px solid var(--line);font:700 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.chipb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:flex;gap:3px;margin-top:10px}.seg i{flex:1;height:10px;border:1px solid var(--ink)}.seg i.f{background:var(--big);border-color:var(--big)}
+.row{display:flex;align-items:center;gap:12px}.grow{flex:1;min-width:0}
+.tk{display:flex;gap:12px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.tk:first-of-type{border:0}
+.tk b{font:800 20px var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;display:block;line-height:1}
+.tag{font:700 10px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--live);color:var(--live);padding:3px 6px;display:inline-block;margin-top:6px}
+/* split card (game) */
+.half{position:relative;height:150px;display:flex;border:1px solid var(--ink);margin-top:14px;overflow:hidden}
+.half>div{flex:1;display:flex;align-items:center;font-family:var(--f-head);font-weight:800;font-variation-settings:'wdth' 75;text-transform:uppercase;font-size:76px;line-height:1;color:var(--big);white-space:nowrap}
+.half .l{justify-content:flex-end;padding-right:1px}.half .r{justify-content:flex-start;padding-left:1px;background:repeating-linear-gradient(135deg,var(--soft) 0 6px,transparent 6px 12px)}
+.half .r.empty{color:transparent;border-left:1px dashed var(--ink)}
+.half .r.empty::after{content:"WAITS FOR 2 PM";position:absolute;right:12px;bottom:10px;font:500 10px var(--f-mono);letter-spacing:.14em;color:var(--muted)}
+/* tabs */
+.tabs{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;background:var(--bg);border-top:1px solid var(--ink);height:58px}
+.tab{flex:1;font:700 11px var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.tab.on{color:var(--ink)}
+#bar{position:absolute;left:0;top:-1px;height:3px;width:33.333%;background:var(--cta)}
+/* overlays */
+.layer{position:absolute;inset:0;pointer-events:none;z-index:20;overflow:hidden}
+#tiles{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(10,1fr);z-index:30}
+#tiles i{background:var(--tc,#C84B31);transform:scale(0)}
+#coins i{position:absolute;left:0;top:0;width:9px;height:9px;background:var(--gold);transform:rotate(45deg)}
+#scrim{background:rgba(0,0,0,.5);opacity:0;z-index:24}
+#sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink);padding:20px 20px 26px;z-index:25;transform:translateY(105%);pointer-events:auto}
+#sheet.dark{background:#151B18;color:#F4EEE2}
+.code{font:700 44px var(--f-mono);letter-spacing:.06em;margin:8px 0 2px}
+.clock{font:500 12px var(--f-mono);letter-spacing:.1em;color:var(--muted)}
+.pin{display:flex;gap:10px;margin:14px 0}.pin i{width:38px;height:4px;background:rgba(244,238,226,.25)}.pin i.f{background:#2FE59D}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(244,238,226,.18);border:1px solid rgba(244,238,226,.18)}.pad button{height:48px;background:#151B18;color:#F4EEE2;font:700 20px var(--f-mono)}
+#toast{position:absolute;left:0;right:0;top:0;z-index:26;background:var(--cta);color:var(--cta-ink);padding:12px 18px;font:700 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;transform:translateY(-100%)}
+#owner{position:absolute;inset:0;z-index:22;background:var(--bg);color:var(--ink);padding:18px;overflow-y:auto;transform:translateY(100%);scrollbar-width:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--ink);margin-top:14px}.grid2>div{padding:12px;border:1px solid var(--line)}
+.grid2 b{display:block;font:800 40px var(--f-head);font-variation-settings:'wdth' 75;line-height:1;color:var(--big)}.grid2 span{font:500 10px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.bar{height:8px;background:var(--soft);margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--big)}
+.bl{display:flex;justify-content:space-between;margin-top:10px;font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+/* panel */
+.panel{width:290px;background:#FAF6EE;border:1px solid #1F1916;padding:18px}
+.panel h3{font:800 20px var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;margin-bottom:2px}.panel p{font-size:12px;color:#6E635B;margin-bottom:10px}
+.panel .g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.panel .g button,.panel .w{padding:10px 8px;border:1px solid #1F1916;font:700 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;background:transparent}
+.panel .g button.on{background:#1F1916;color:#FAF6EE}.panel .w{width:100%;margin-bottom:8px}
+.panel ol{font-size:12px;color:#1F1916;padding-left:16px;margin:8px 0;line-height:1.55}.panel small{display:block;font-size:11px;color:#6E635B;line-height:1.5}
+@media (max-width:860px){.panel{position:fixed;left:8px;right:8px;bottom:8px;width:auto;z-index:99;display:none}.panel.show{display:block}.phone{width:100%;height:100%;border:0;border-radius:0}.stage{padding:0}.demobtn{display:flex!important}}
+.demobtn{display:none;position:fixed;bottom:66px;right:12px;z-index:100;background:#1F1916;color:#FAF6EE;padding:8px 12px;font:700 10px var(--f-mono);letter-spacing:.12em}
+@media (prefers-reduced-motion:reduce){.live i,.tick div{animation:none}}
+
+/* ---- v4 additions (same look as v2) ---- */
+.hero.sm{font-size:58px}
+.ital{margin-top:2px}
+.stampW{position:relative;flex:none}
+.stamp{width:112px;height:112px;border-radius:50%;border:3px solid var(--big);color:var(--big);display:grid;place-items:center;text-align:center;font:800 24px/.92 var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;transform:rotate(-8deg);position:relative}
+.stamp::before{content:"";position:absolute;inset:6px;border:1px solid var(--big);border-radius:50%}
+.stamp.off{border-style:dashed;color:var(--muted);border-color:var(--line);opacity:.75}.stamp.off::before{display:none}
+.ink{position:absolute;inset:0;border:2px solid var(--big);border-radius:50%;opacity:0;pointer-events:none}
+.field{width:100%;height:54px;margin-top:12px;padding:0 14px;border:1px solid var(--ink);background:transparent;color:var(--ink);font:700 18px var(--f-mono);letter-spacing:.08em;outline:none;border-radius:0}
+.field:focus{border-color:var(--big)}
+.reels{display:flex;gap:8px;margin-top:14px}
+.reel{flex:1;height:96px;border:1px solid var(--ink);overflow:hidden;position:relative}
+.reel .rwp{position:absolute;left:0;right:0;top:0;will-change:transform}
+.rs{display:flex;align-items:center;justify-content:center;height:96px;font:800 25px var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;color:var(--big)}
+.reel::before,.reel::after{content:"";position:absolute;left:0;right:0;height:1px;background:var(--line);z-index:2}.reel::before{top:28%}.reel::after{bottom:28%}
+.pad2{display:block;width:100%;height:116px;margin-top:14px;border:1px solid var(--ink);position:relative;overflow:hidden;font:700 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;touch-action:none;user-select:none;-webkit-user-select:none;text-align:center;padding:0 12px}
+.pad2 i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--cta);opacity:.35}
+.pad2 span{position:relative}
+.runner{font-family:var(--f-head);font-weight:800;font-variation-settings:'wdth' 75;font-size:104px;line-height:.9;color:var(--big);margin:6px 0 12px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.target{font-family:var(--f-head);font-weight:800;font-variation-settings:'wdth' 75;font-size:44px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.hold{position:relative;overflow:hidden;display:block;width:100%;height:56px;margin-top:14px;border:1px solid var(--cta);font:700 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);background:transparent;touch-action:none;user-select:none;-webkit-user-select:none}
+.hold i{position:absolute;inset:0;width:0;background:var(--cta);opacity:.55}.hold span{position:relative}
+.msg{margin-top:12px}
+.tk .btn.sm+.btn.sm{margin-left:6px}
+
+#flash{background:#FFF8EE;opacity:0;z-index:31}
+</style>
+</head>
+<body>
+<button class="demobtn" id="demoToggle">DEMO</button>
+<div class="stage">
+  <div class="phone"><div class="app" id="app" data-mode="afternoon">
+    <div id="grid"></div>
+    <div class="top"><span class="brand">Moko</span><span class="live"><i></i><span id="liveT">Lunch · live</span></span><div class="chip"><span class="coin"></span><span id="bal">40</span></div></div>
+    <div class="tick"><div id="tickT"></div></div>
+    <div id="pages"><div id="page"></div></div>
+    <div class="tabs" id="tabs"><div id="bar"></div>
+      <button class="tab on" data-p="club">Club</button><button class="tab" data-p="play">Play</button><button class="tab" data-p="wallet">Wallet</button></div>
+    <div id="toast"></div>
+    <div id="scrim" class="layer"></div>
+    <div id="sheet"></div>
+    <div id="owner"></div>
+    <div id="coins" class="layer"></div>
+    <div id="tiles" class="layer"></div>
+    <div id="flash" class="layer"></div>
+  </div></div>
+  <aside class="panel" id="panel">
+    <h3>Demo controls</h3><p>Bench 4 · Moko, below Lodha Amara</p>
+    <div class="g" id="clockBtns"><button data-m="afternoon" class="on">1:00 PM</button><button data-m="evening">8:30 PM</button></div>
+    <div class="g"><button id="nextDay">Next day</button><button id="ownerBtn">Owner view</button></div>
+    <div class="g"><button id="srcNfc">Tap NFC</button><button id="srcQr">Scan QR</button></div>
+    <button class="w" id="reset">Reset demo</button>
+    <ol><li>Club: add a bill number to get a stamp.</li><li>Play: slot and Stop at the Mark.</li><li>Wallet: coins work 12 to 5 PM only.</li><li>Press Next day twice and watch the stamp run out.</li></ol>
+    <small>Same sticker, two ways in: NFC chip and printed QR, both open one link. All numbers and rules are placeholders until Moko agrees them.</small>
+  </aside>
+</div>
+<script>
+/* ============ MOTION KIT v2: sharp, from the documentary-style reel ============
+   no bounce, no blur, no cartoon pops. Everything cuts or snaps on the reel's ease-out (.16,1,.3,1).
+   grid    : dashed hairlines draw in, dots land on the crossings
+   words   : huge condensed caps rise out of a mask, one after another
+   kickers : small mono lines type in
+   cards   : a thin slit opens to full height
+   cuts    : a field of tiles flashes in random order, the page swaps underneath, tiles flash out
+   always  : ticker keeps moving, live dot blinks */
+gsap.registerPlugin(CustomEase);
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches, D = s => RM ? 0 : s;
+const E = {out:CustomEase.create('o','.16,1,.3,1'), in:CustomEase.create('i','.7,0,.84,0')};
+const $ = (s,r=document)=>r.querySelector(s), $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const app = $('#app'), phone = $('.phone'), page = $('#page');
+
+/* grid: thirds, like the reel */
+function drawGrid(){
+  const g = $('#grid'), W = phone.clientWidth, H = phone.clientHeight; g.innerHTML = '';
+  const xs = [W/3, 2*W/3], ys = [H*.28, H*.52, H*.76];
+  xs.forEach(x => g.insertAdjacentHTML('beforeend', `<div class="gl gl-v" style="left:${x}px"></div>`));
+  ys.forEach(y => g.insertAdjacentHTML('beforeend', `<div class="gl gl-h" style="top:${y}px"></div>`));
+  xs.forEach(x => ys.forEach(y => g.insertAdjacentHTML('beforeend', `<div class="node" style="left:${x}px;top:${y}px"></div>`)));
+  gsap.fromTo('.gl-v', {scaleY:0}, {scaleY:1, duration:D(.8), ease:E.out, stagger:.07});
+  gsap.fromTo('.gl-h', {scaleX:0}, {scaleX:1, duration:D(.8), ease:E.out, stagger:.07, delay:.1});
+  gsap.fromTo('.node', {scale:0}, {scale:1, duration:D(.25), ease:'steps(3)', stagger:{each:.035, from:'random'}, delay:.5});
+}
+function typeIn(el){ const t = el.textContent; el.innerHTML = [...t].map(c => `<span style="opacity:0">${c === ' ' ? '&nbsp;' : c}</span>`).join(''); gsap.to(el.children, {opacity:1, duration:.01, stagger:D(.014)}); }
+function enter(){
+  $$('[data-k]', page).forEach(typeIn);
+  gsap.fromTo($$('.w', page), {yPercent:112}, {yPercent:0, duration:D(.6), ease:E.out, stagger:D(.07)});
+  const cs = $$('.card,.tk', page);
+  gsap.fromTo(cs, {clipPath:'inset(50% 0 50% 0)'}, {clipPath:'inset(0% 0 0% 0)', duration:D(.55), ease:E.out, stagger:{each:D(.07), amount:D(.5)}, delay:D(.12), clearProps:'clipPath'});
+  gsap.fromTo($$('.card>*', page), {opacity:0}, {opacity:1, duration:D(.25), delay:D(.3), stagger:D(.015), clearProps:'opacity'});
+}
+/* tile cut: covers in random order, swaps, uncovers. The only transition. */
+const tiles = $('#tiles'); tiles.innerHTML = '<i></i>'.repeat(50);
+function cut(swap, color){
+  tiles.style.setProperty('--tc', color || '#C84B31');
+  if(RM){ swap(); return; }
+  const t = $$('i', tiles); gsap.killTweensOf(t);
+  /* the swap runs on its own timer so a throttled or hidden tab can never leave the page half-changed */
+  gsap.set(t, {scale:0}); gsap.to(t, {scale:1, duration:.001, stagger:{each:.006, from:'random'}});
+  setTimeout(swap, 340);
+  gsap.to(t, {scale:0, duration:.001, stagger:{each:.006, from:'random'}, delay:.4});
+  setTimeout(() => { gsap.killTweensOf(t); gsap.set(t, {scale:0}); }, 1000);
+}
+function count(el, to, {from=null, dur=.7, pre='', suf=''} = {}){
+  const cur = from ?? (parseFloat(el.dataset.v) || 0), o = {v:cur}; el.dataset.v = to;
+  el._tw && el._tw.kill();
+  el._tw = gsap.to(o, {v:to, duration:D(dur), ease:E.out, onUpdate:()=>{el.textContent = pre + Math.round(o.v).toLocaleString('en-IN') + suf}, onComplete:()=>{el.textContent = pre + Math.round(to).toLocaleString('en-IN') + suf}});
+}
+/* a press answers at once: invert, no bounce */
+document.addEventListener('pointerdown', e => { const b = e.target.closest('.btn,.chipb,.tab,.pad button'); if(b && !b.disabled){ b.dataset.pr = 1; b.style.filter = 'invert(1) hue-rotate(180deg)'; } });
+const rel = () => $$('[data-pr]').forEach(b => { delete b.dataset.pr; b.style.filter = ''; });
+document.addEventListener('pointerup', rel); document.addEventListener('pointercancel', rel);
+let toastT;
+function toast(m){ const t = $('#toast'); t.textContent = m; gsap.killTweensOf(t); gsap.fromTo(t, {yPercent:-100}, {yPercent:0, duration:D(.35), ease:E.out}); clearTimeout(toastT); toastT = setTimeout(() => gsap.to(t, {yPercent:-100, duration:D(.25), ease:E.in}), 2200); }
+function award(n, fromEl){
+  const pr = phone.getBoundingClientRect(), fr = fromEl.getBoundingClientRect(), tr = $('.chip .coin').getBoundingClientRect(), b = phone.clientLeft;
+  const sx = fr.left + fr.width/2 - pr.left - b, sy = fr.top + fr.height/2 - pr.top - b, tx = tr.left - pr.left - b, ty = tr.top - pr.top - b, k = Math.min(8, Math.max(3, Math.round(n/6)));
+  /* the balance is updated on a plain timer; the flying squares are only the picture of it */
+  for(let j = 0; j < k; j++){ const c = document.createElement('i'); $('#coins').appendChild(c); gsap.set(c, {x:sx, y:sy}); gsap.to(c, {x:tx, y:ty, duration:D(.55), delay:D(j*.03), ease:E.out}); setTimeout(() => c.remove(), 1500); }
+  setTimeout(() => landed(n), D(450));
+}
+function landed(n){ const from = S.bal; S.bal += n; count($('#bal'), S.bal, {from, dur:.6}); }
+
+
+/* one white frame on the big moments, like the reel */
+function flash(){ if(RM) return; gsap.fromTo('#flash', {opacity:.85}, {opacity:0, duration:.18, ease:'power1.out'}); }
+
+/* ============ STATE ============ */
+const fresh = () => ({mode:'afternoon', day:1, stampDay:0, stamps:4, bal:40, slot:1, stop:1, used:[], coffee:true, table:false, invites:[], tab:'club', game:null, src:'qr', stopWins:0, st:{lunch:18, evening:9, plays:7, stopWins:1, slotWins:1, members:42}});
+let S = fresh(), G = null, tid = 0, clockT, cur = null, holdT = null;
+const aft = () => S.mode === 'afternoon', left = () => S.stampDay === null ? 0 : Math.max(0, 3 - (S.day - S.stampDay)), active = () => left() > 0;
+const REW = [{t:'Filter coffee', c:60, n:'With a lunch order'},{t:'Dessert of the day', c:100, n:'With a lunch order'},{t:"Chef's lunch special, half price", c:250, n:'Weekday lunch'}];
+const SYM = ['SUSHI','BAO','KEBAB','MOJITO','SIZZLER','DIMSUM','KUNAFA','BROWNIE','COFFEE'];
+const LUNCH_COINS = 20, EVE_COINS = 10, SLOT_WIN = 100, STOP_WIN = 150, STOP_TOL = 0.25, STOP_SPEED = 36, STOP_POOL = 2;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const W = (t, cls='') => `<span class="mask"><span class="w ${cls}">${t}</span></span>`;
+const rnd = n => Math.floor(Math.random() * n);
+
+/* ============ PAGES ============ */
+function invitesHTML(){
+  return S.invites.map(v => `<div class="tk"><div class="grow"><b>${esc(v.name)}</b><p class="sub">${v.code}</p></div>${v.paid ? '<span class="tag">Paid · +100</span>' : `<a class="btn sm alt" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Lunch at Moko on me. Show code ' + v.code + ' when you pay for 50% off your first lunch (weekdays 12 to 5 PM).')}">Share</a><button class="btn sm" data-fpaid="${v.id}">Demo: paid</button>`}</div>`).join('');
+}
+function pClub(){
+  const L = left(), on = L > 0;
+  const hero = on ? W('In the club') + W(L + (L === 1 ? ' day' : ' days') + ' left') : W('Join the club') + W('with lunch');
+  const ital = aft() ? 'Each lunch gives you a stamp and double coins.' : 'Stamps come from lunch, 12 to 5 PM. The coins you earn tonight work then.';
+  const perk = (t, s, b) => `<div class="tk"><div class="grow"><b>${t}</b><p class="sub">${s}</p></div>${b}</div>`;
+  return `<div class="kick" data-k>Bench 4 · via ${S.src.toUpperCase()}</div><div class="hero sm">${hero}</div><p class="ital">${ital}</p>
+   <div class="card"><div class="kick">01 / Your stamp</div>
+     <div class="row" style="margin-top:12px"><div class="stampW"><div class="stamp ${on ? '' : 'off'}" id="stampEl"><span>Moko<br>Club</span></div><i class="ink" id="inkEl"></i></div>
+     <div class="grow"><div class="bign" id="stampN">${S.stamps}</div><p class="sub">lunch stamps. Each one keeps you in the Club for 3 days.</p></div></div>
+     <div class="seg">${[0,1,2].map(i => `<i class="${i < L ? 'f' : ''}"></i>`).join('')}</div>
+     <button class="btn" id="paid"><span>I paid · add bill number</span><span>→</span></button></div>
+   <div class="card ${on ? '' : 'dim'}"><div class="kick">02 / Club perks · ${on ? 'on' : 'off'}</div>
+     ${perk('10% off lunch', on ? 'Show this screen when you pay.' : 'Switches on with your next lunch stamp.', `<span class="tag">${on ? 'On' : 'Off'}</span>`)}
+     ${perk('Free filter coffee', 'With a lunch order. One per stamp.', `<button class="btn sm" data-use="coffee" ${on && S.coffee && aft() ? '' : 'disabled'}>${S.coffee ? 'Use' : 'Used'}</button>`)}
+     ${perk('Club table', 'Hold a table from 11:45 AM.', `<button class="btn sm ${S.table ? 'alt' : ''}" data-table="1" ${on ? '' : 'disabled'}>${S.table ? 'Held' : 'Hold'}</button>`)}</div>
+   <div class="card"><div class="kick">03 / Bring a colleague</div><h3>50% off their lunch</h3><p class="sub">Add their first name. When they pay, you get 100 coins.</p>
+     <input class="field" id="fname" maxlength="20" placeholder="First name" autocomplete="off"><button class="btn alt" id="mkinv"><span>Create invite</span><span>→</span></button>${invitesHTML()}</div>`;
+}
+function pPlay(){
+  if(S.game === 'slot') return slotView();
+  if(S.game === 'stop') return stopView();
+  const pool = S.stopWins < STOP_POOL;
+  return `<div class="kick" data-k>Play for coins</div><div class="hero sm">${W('One play')}${W('per order')}</div><p class="ital">You also get one free play of each, every day.</p>
+   <div class="card"><div class="kick">01 / Slot</div><h3>Three reels</h3><p class="sub">Spin each reel yourself: hold to charge, release to spin. Chance game. About 1 in 12 plays wins ${SLOT_WIN} coins.</p>
+     <span class="tag">${S.slot} ${S.slot === 1 ? 'play' : 'plays'} left</span><button class="btn" data-play="slot" ${S.slot ? '' : 'disabled'}><span>Play slot</span><span>→</span></button></div>
+   <div class="card"><div class="kick">02 / Stop at the mark</div><h3>Hit the exact number</h3><p class="sub">A number runs fast. Stop it on the target. Hard on purpose, few win. Pays ${STOP_WIN} coins, never cash. A daily prize pool applies.</p>
+     <span class="tag">${S.stop} ${S.stop === 1 ? 'play' : 'plays'} left</span><button class="btn" data-play="stop" ${S.stop && pool ? '' : 'disabled'}><span>${pool ? 'Play stop' : "Today's pool is used up"}</span><span>→</span></button></div>`;
+}
+function pWallet(){
+  const rows = REW.map((r,i) => { const ok = aft() && S.bal >= r.c; return `<div class="tk"><div class="grow"><b>${r.t}</b><p class="sub">${r.n} · ${r.c} coins</p></div><button class="btn sm" data-rw="${i}" ${ok ? '' : 'disabled'}>${aft() ? (S.bal >= r.c ? 'Use' : 'Need ' + (r.c - S.bal)) : 'Lunch only'}</button></div>`; }).join('');
+  return `<div class="kick" data-k>Wallet</div><div class="hero">${W('<span id="wbal" data-v="' + S.bal + '">' + S.bal + '</span> coins')}</div>
+   <p class="ital">Earn coins on every order. Spend them 12 to 5 PM only.</p>
+   <div class="card"><div class="kick">Lunch pays double</div><p class="sub" style="margin-top:6px">${LUNCH_COINS} coins for a lunch order, ${EVE_COINS} for an evening order. Coins never expire.</p></div>
+   <div class="card"><div class="kick">Spend coins</div>${rows}</div>`;
+}
+const PAGES = {club:pClub, play:pPlay, wallet:pWallet};
+function render(anim){
+  cancelAnimationFrame(G && G.raf); page.innerHTML = PAGES[S.tab](); $('#bal').textContent = S.bal; $('#bal').dataset.v = S.bal;
+  $('#liveT').textContent = aft() ? 'Lunch · live' : 'Evening';
+  $('#tickT').innerHTML = (aft() ? `Lunch pays double coins · a stamp keeps you in the club for 3 days · ${active() ? left() + ' days left on your stamp' : 'join with your next lunch'} · coins work 12 to 5 PM · `
+    : `Coins you earn tonight work at lunch · stamps come from lunch, 12 to 5 PM · `).repeat(8);
+  const i = ['club','play','wallet'].indexOf(S.tab); gsap.to('#bar', {x:i * phone.clientWidth/3, duration:D(.35), ease:E.out});
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.p === S.tab));
+  if(anim) enter(); else $$('.w', page).forEach(w => w.style.transform = 'none');
+}
+function go(tab){ if(tab === S.tab && !S.game) return; cut(() => { S.tab = tab; S.game = null; G = null; render(true); page.scrollTop = 0; }); }
+function applyMode(m){ S.mode = m; app.dataset.mode = m; $$('#clockBtns [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === m)); }
+function setMode(m){ if(m === S.mode) return; cut(() => { applyMode(m); S.game = null; G = null; render(true); drawGrid(); page.scrollTop = 0; }, m === 'evening' ? '#151B18' : '#FAF6EE'); }
+function nextDay(){
+  cut(() => {
+    S.day++; S.slot = Math.max(S.slot, 1); S.stop = Math.max(S.stop, 1); S.stopWins = 0; S.game = null; G = null;
+    if(!active()){ S.table = false; S.coffee = false; }
+    applyMode('afternoon'); render(true); drawGrid(); page.scrollTop = 0;
+    toast(active() ? 'Day ' + S.day + ' · ' + left() + (left() === 1 ? ' day' : ' days') + ' left on your stamp' : 'Your Club stamp ran out. Lunch brings it back');
+  }, '#FAF6EE');
+}
+
+/* ============ SHEETS ============ */
+function sheet(html){ const sh = $('#sheet'); sh.innerHTML = html; gsap.to('#scrim', {opacity:1, duration:D(.2)}); $('#scrim').style.pointerEvents = 'auto'; gsap.fromTo(sh, {yPercent:105}, {yPercent:0, duration:D(.4), ease:E.out}); }
+function closeSheet(){ clearInterval(clockT); clearTimeout(holdT); gsap.to('#sheet', {yPercent:105, duration:D(.25), ease:E.in}); gsap.to('#scrim', {opacity:0, duration:D(.2)}); $('#scrim').style.pointerEvents = 'none'; }
+function earnSheet(){
+  sheet(`<div class="kick">Your receipt</div><h3 style="font:800 34px/.95 var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;margin:6px 0 8px">Bill number</h3>
+    <p class="sub">${aft() ? 'Lunch: you get a stamp, ' + LUNCH_COINS + ' coins and a play.' : 'Evening: you get ' + EVE_COINS + ' coins and a play. Stamps come from lunch.'}</p>
+    <input class="field" id="bill" inputmode="numeric" maxlength="8" placeholder="e.g. 20418" autocomplete="off">
+    <button class="btn" id="billOk"><span>${aft() ? 'Add my stamp' : 'Add my coins'}</span><span>→</span></button><button class="btn alt" id="cancelSheet"><span>Cancel</span><span>×</span></button>`);
+}
+function earn(){
+  const v = ($('#bill').value || '').replace(/\D/g, '');
+  if(v.length < 3){ gsap.fromTo('#bill', {x:-8}, {x:0, duration:D(.3), ease:'steps(6)'}); toast('Type the bill number from your receipt'); return; }
+  if(S.used.includes(v)){ toast('That bill number is already added'); return; }
+  S.used.push(v); S.slot++; S.stop++; S.st.plays++;
+  const lunch = aft(); closeSheet();
+  setTimeout(() => {
+    S.tab = 'club'; S.game = null; G = null;
+    if(lunch){ S.stamps++; S.stampDay = S.day; S.coffee = true; S.st.lunch++; } else S.st.evening++;
+    render(false); if(lunch) stampAnim();
+    award(lunch ? LUNCH_COINS : EVE_COINS, $('#paid'));
+    toast(lunch ? 'Stamped. You are in the Club for 3 days' : 'Coins added. They work at lunch');
+  }, D(350));
+}
+function stampAnim(){
+  const el = $('#stampEl'), ink = $('#inkEl'); if(!el) return;
+  if(!RM){
+    gsap.fromTo(el, {scale:1.9, opacity:0, rotation:-20}, {scale:1, opacity:1, rotation:-8, duration:.2, ease:'power4.in'});
+    setTimeout(() => { gsap.fromTo(ink, {scale:.9, opacity:.9}, {scale:2.1, opacity:0, duration:.6, ease:E.out}); gsap.fromTo(page, {y:4}, {y:0, duration:.14, ease:'steps(3)'}); try{ if(navigator.vibrate) navigator.vibrate(25); }catch(e){} }, 200);
+  }
+}
+/* hold to use: staff glance at the screen, the guest holds the button for a second */
+function useSheet(o){
+  cur = o;
+  sheet(`<div class="kick">Show this to staff</div><div class="code" id="clk" style="font-size:40px"></div>
+    <div class="card" style="margin-top:14px"><h3 style="font-size:26px">${esc(o.title)}</h3><p class="sub">${esc(o.sub)}</p></div>
+    <button class="hold" id="holdBtn"><i></i><span>Hold to use</span></button><button class="btn alt" id="cancelSheet"><span>Cancel</span><span>×</span></button>`);
+  const t = () => { $('#clk') && ($('#clk').textContent = new Date().toLocaleTimeString('en-IN')); }; t(); clockT = setInterval(t, 1000);
+}
+function holdStart(){ if(!cur) return; clearTimeout(holdT); gsap.to('#holdBtn i', {width:'100%', duration:1.1, ease:'none'}); holdT = setTimeout(useDone, 1100); }
+function holdStop(){ clearTimeout(holdT); const i = $('#holdBtn i'); if(i && cur) gsap.to(i, {width:'0%', duration:.2}); }
+function useDone(){
+  const o = cur; cur = null; clearInterval(clockT);
+  $('#sheet').innerHTML = `<div class="kick" style="color:var(--live)">Used</div><div style="font:800 80px/.9 var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;color:var(--big);margin:10px 0"><span class="mask"><span class="w">DONE.</span></span></div><p class="sub">${esc(o.title)}</p>`;
+  gsap.fromTo('#sheet .w', {yPercent:112}, {yPercent:0, duration:D(.5), ease:E.out});
+  o.done();
+  setTimeout(() => { closeSheet(); render(false); }, D(0) + 1100);
+}
+
+/* ============ SLOT: three reels, each spun on its own. Power changes the feel; the result is chance. ============ */
+function slotOutcome(){
+  const a = rnd(9), notA = () => { let x = rnd(9); while(x === a) x = rnd(9); return x; };
+  if(Math.random() < 0.9) return [a, a, Math.random() < 0.0926 ? a : notA()];  /* first two match 90% of plays; all three about 1 in 12 */
+  return [a, notA(), rnd(9)];
+}
+function slotView(){
+  return `<div class="kick" data-k>Slot</div><div class="hero sm">${W('Spin each')}${W('reel')}</div>
+   <div class="reels">${[0,1,2].map(k => `<div class="reel" data-r="${k}"><div class="rwp"><div class="rs"></div><div class="rs"></div><div class="rs"></div></div></div>`).join('')}</div>
+   <button class="pad2" id="spinPad"><i id="pw"></i><span id="padT">Reel 1 of 3 · hold to charge, release to spin</span></button>
+   <p class="sub msg" id="slotMsg">Chance game. About 1 in 12 plays wins ${SLOT_WIN} coins. A harder or longer press spins the reel longer.</p>
+   <button class="btn alt" id="gameBack"><span>Back</span><span>×</span></button>`;
+}
+const mod9 = x => ((Math.round(x) % 9) + 9) % 9;
+function setReel(k, pos){
+  const r = $('.reel[data-r="' + k + '"]'); if(!r) return;
+  const i = Math.floor(pos), f = pos - i, s = $$('.rs', r);
+  s[0].textContent = SYM[mod9(i + 1)]; s[1].textContent = SYM[mod9(i)]; s[2].textContent = SYM[mod9(i - 1)];
+  $('.rwp', r).style.transform = 'translateY(' + ((f - 1) * 96) + 'px)';
+}
+function slotStart(){
+  if(S.slot < 1) return; S.slot--; S.game = 'slot';
+  G = {type:'slot', out:slotOutcome(), i:0, pos:[0,0,0], spinning:false};
+  cut(() => { S.tab = 'play'; render(true); [0,1,2].forEach(k => setReel(k, 0)); });
+}
+function spinReel(k, power){
+  if(!G || G.type !== 'slot' || G.spinning || k !== G.i || k > 2) return;
+  G.spinning = true; const p = Math.max(.12, Math.min(1, power));
+  const base = Math.ceil(G.pos[k]) + Math.round(9 + 18 * p), end = base + ((G.out[k] - (base % 9)) + 9) % 9, dur = .9 + 1.7 * p, o = {p:G.pos[k]};
+  const tw = gsap.to(o, {p:end, duration:dur, ease:'power3.out', onUpdate:() => setReel(k, o.p)});
+  $('#padT') && ($('#padT').textContent = 'Spinning…');
+  setTimeout(() => {
+    tw.kill(); setReel(k, end); G.pos[k] = end; G.spinning = false; G.i++;
+    if(G.i < 3){ $('#padT').textContent = 'Reel ' + (G.i + 1) + ' of 3 · hold to charge, release to spin'; }
+    else slotResult();
+  }, dur * 1000 + 60);
+}
+function slotResult(){
+  const win = G.out[0] === G.out[1] && G.out[1] === G.out[2], two = G.out[0] === G.out[1];
+  $('#padT').textContent = win ? 'Three of a kind' : 'Round over';
+  $('#spinPad').disabled = true;
+  if(win){ S.st.slotWins++; flash(); award(SLOT_WIN, $('.reels')); $('#slotMsg').textContent = 'Three ' + SYM[G.out[0]] + '. ' + SLOT_WIN + ' coins added.'; toast('Three of a kind. +' + SLOT_WIN + ' coins'); }
+  else $('#slotMsg').textContent = two ? 'Two of three. So close. Order again for another play.' : 'No match this time. You get a free play every day.';
+  G.over = true;
+}
+/* charge: time held (and pressure where the phone gives it) sets the power. Shake works too where the phone allows it. */
+let chg = null;
+function chgLoop(){ if(!chg) return; const p = Math.min(1, Math.max((performance.now() - chg.t0) / 1100, chg.pr)); const w = $('#pw'); if(w) w.style.width = (p * 100) + '%'; requestAnimationFrame(chgLoop); }
+document.addEventListener('pointerdown', e => {
+  if(e.target.closest('#spinPad') && G && G.type === 'slot' && !G.spinning && G.i < 3 && !G.over){ chg = {t0:performance.now(), pr:0}; chgLoop(); }
+  if(e.target.closest('#holdBtn')) holdStart();
+});
+document.addEventListener('pointermove', e => { if(chg && e.pointerType !== 'mouse' && e.pressure > 0.05 && e.pressure !== 0.5) chg.pr = Math.max(chg.pr, e.pressure); });
+const release = () => {
+  if(chg){ const p = Math.min(1, Math.max((performance.now() - chg.t0) / 1100, chg.pr)); chg = null; const w = $('#pw'); if(w) w.style.width = '0%'; if(G) spinReel(G.i, p); }
+  holdStop();
+};
+window.addEventListener('pointerup', release); window.addEventListener('pointercancel', release);
+window.addEventListener('devicemotion', e => {
+  const a = e.accelerationIncludingGravity; if(!a || !G || G.type !== 'slot' || G.spinning || G.over || G.i > 2) return;
+  const m = Math.abs(Math.sqrt((a.x||0)**2 + (a.y||0)**2 + (a.z||0)**2) - 9.8); if(m > 14) spinReel(G.i, Math.min(1, m / 40));
+});
+
+/* ============ STOP AT THE MARK: honest skill game. The result is exactly what the player stopped on. ============ */
+const fmt = v => v.toFixed(3).padStart(6, '0');
+function stopView(){
+  return `<div class="kick" data-k>Stop at the mark</div><div class="hero sm">${W('Stop it')}${W('exactly')}</div>
+   <div class="card"><div class="kick">Target</div><div class="target" id="tgt">${fmt(G.target)}</div>
+     <div class="runner" id="run">${fmt(10)}</div>
+     <button class="btn" id="stopBtn"><span id="stopT">Start</span><span>→</span></button></div>
+   <p class="sub msg" id="stopMsg">Win if you stop within ±${STOP_TOL.toFixed(2)} of the target. Hard on purpose. Pays ${STOP_WIN} coins. Today's pool: ${STOP_POOL - S.stopWins} of ${STOP_POOL} wins left.</p>
+   <button class="btn alt" id="gameBack"><span>Back</span><span>×</span></button>`;
+}
+function stopStart(){
+  if(S.stop < 1 || S.stopWins >= STOP_POOL) return; S.stop--; S.game = 'stop';
+  G = {type:'stop', target:+(20 + Math.random() * 70).toFixed(3), from:Math.random() * 90, t0:0, running:false, over:false};
+  cut(() => { S.tab = 'play'; render(true); });
+}
+const stopVal = now => 10 + ((G.from + STOP_SPEED * (now - G.t0) / 1000) % 90);
+function stopLoop(){ if(!G || !G.running) return; const r = $('#run'); if(r) r.textContent = fmt(stopVal(performance.now())); G.raf = requestAnimationFrame(stopLoop); }
+function stopTap(now = performance.now()){
+  if(!G || G.type !== 'stop' || G.over) return;
+  if(!G.running){ G.running = true; G.t0 = now; $('#stopT').textContent = 'STOP'; stopLoop(); return; }
+  G.running = false; G.over = true; cancelAnimationFrame(G.raf);
+  const v = stopVal(now), diff = Math.abs(v - G.target), win = diff <= STOP_TOL;
+  $('#run').textContent = fmt(v); $('#stopT').textContent = 'Round over'; $('#stopBtn').disabled = true;
+  if(win){ S.stopWins++; S.st.stopWins++; flash(); award(STOP_WIN, $('#run')); $('#stopMsg').textContent = 'You stopped on ' + fmt(v) + '. Off by ' + diff.toFixed(3) + '. ' + STOP_WIN + ' coins added.'; toast('Exact. +' + STOP_WIN + ' coins'); }
+  else $('#stopMsg').textContent = 'You stopped on ' + fmt(v) + '. Off by ' + diff.toFixed(3) + '. Needed ±' + STOP_TOL.toFixed(2) + '. Try again with your next play.';
+}
+
+/* ============ OWNER (demo data) ============ */
+function ownerView(){
+  const o = $('#owner'), st = S.st, lunch = st.lunch, eve = st.evening, share = Math.round(lunch / (lunch + eve) * 100);
+  o.innerHTML = `<div class="row"><div class="grow"><div class="kick">Owner view · demo data</div><h3 style="font:800 34px var(--f-head);font-variation-settings:'wdth' 75;text-transform:uppercase;margin-top:4px">The lunch push</h3></div><button class="btn sm alt" id="ownerClose">Close</button></div>
+   <div class="grid2"><div><b data-c="${lunch}">0</b><span>Lunch orders (stamps)</span></div><div><b data-c="${eve}">0</b><span>Evening orders</span></div><div><b data-c="${st.members + S.invites.length}">0</b><span>Club members</span></div><div><b data-c="${st.plays}">0</b><span>Plays used</span></div></div>
+   <div class="card"><div class="kick">Share of orders at lunch</div><div class="bl"><span>Lunch</span><span class="num">${share}%</span></div><div class="bar"><i data-w="${share}"></i></div>
+     <div class="bl"><span>Stamps still active (3 days)</span><span class="num">${active() ? 'You' : 'None'} +${st.members - 12}</span></div></div>
+   <div class="card"><div class="kick">Games</div><div class="bl"><span>Slot wins</span><span class="num">${st.slotWins}</span></div><div class="bl"><span>Stop-at-the-mark wins</span><span class="num">${st.stopWins}</span></div>
+     <p class="sub" style="margin-top:10px">Both games pay coins only, never cash or free food.</p></div>
+   <div class="card dim"><div class="kick">Check each night</div><p class="sub" style="margin-top:6px">Compare today's added bill numbers with the till. Remove any that do not match. Placeholder figures until Moko shares real afternoon order counts.</p></div>`;
+  gsap.fromTo(o, {yPercent:0, y:phone.clientHeight}, {y:0, duration:D(.45), ease:E.out});
+  $$('[data-c]', o).forEach(n => count(n, +n.dataset.c, {from:0, dur:.9}));
+  $$('.bar i', o).forEach((b,i) => gsap.to(b, {width:b.dataset.w + '%', duration:D(.8), ease:E.out, delay:D(.2 + i*.06)}));
+}
+
+/* ============ EVENTS ============ */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if(!t) return;
+  if(t.dataset.p) go(t.dataset.p);
+  else if(t.id === 'paid') earnSheet();
+  else if(t.id === 'billOk') earn();
+  else if(t.dataset.play === 'slot') slotStart();
+  else if(t.dataset.play === 'stop') stopStart();
+  else if(t.id === 'stopBtn') stopTap();
+  else if(t.id === 'gameBack'){ S.game = null; G = null; cut(() => render(true)); }
+  else if(t.dataset.use === 'coffee'){ useSheet({title:'Free filter coffee', sub:'Club perk. With a lunch order.', done:() => { S.coffee = false; }}); }
+  else if(t.dataset.table){ S.table = !S.table; render(false); toast(S.table ? 'Club table held from 11:45 AM' : 'Table released'); }
+  else if(t.dataset.rw){ const r = REW[+t.dataset.rw]; useSheet({title:r.t, sub:r.n + '. ' + r.c + ' coins.', done:() => { S.bal -= r.c; $('#bal').textContent = S.bal; }}); }
+  else if(t.id === 'mkinv'){ const n = ($('#fname').value || '').replace(/[^\p{L} \-]/gu, '').trim().slice(0,20); if(!n){ gsap.fromTo('#fname', {x:-8}, {x:0, duration:D(.3), ease:'steps(6)'}); return; }
+    const v = {id:++tid, name:n, code:'MK-' + n.replace(/[^A-Za-z]/g,'').slice(0,4).toUpperCase().padEnd(4,'X') + '-' + Math.random().toString(36).slice(2,5).toUpperCase(), paid:false}; S.invites.push(v); render(false); toast('Invite ready for ' + n); }
+  else if(t.dataset.fpaid){ const v = S.invites.find(x => x.id == t.dataset.fpaid); v.paid = true; render(false); award(100, t); toast(v.name + ' paid. +100 coins'); }
+  else if(t.id === 'cancelSheet') closeSheet();
+});
+$('#scrim').addEventListener('click', closeSheet);
+$('#clockBtns').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if(b) setMode(b.dataset.m); });
+$('#nextDay').onclick = nextDay;
+const arrive = src => { S.src = src; S.tab = 'club'; S.game = null; G = null; cut(() => { render(true); }); toast(src === 'nfc' ? 'NFC tap · Bench 4' : 'QR scan · Bench 4'); };
+$('#srcNfc').onclick = () => arrive('nfc'); $('#srcQr').onclick = () => arrive('qr');
+$('#ownerBtn').onclick = ownerView;
+$('#reset').onclick = () => { S = fresh(); G = null; tid = 0; applyMode('afternoon'); cut(() => { render(true); drawGrid(); }); };
+$('#demoToggle').onclick = () => $('#panel').classList.toggle('show');
+window.addEventListener('resize', drawGrid);
+document.addEventListener('click', e => { if(e.target.closest('#ownerClose')) gsap.to('#owner', {y:phone.clientHeight, duration:D(.3), ease:E.in}); });
+const qs = new URLSearchParams(location.search); if(qs.get('src') === 'nfc' || qs.get('src') === 'qr') S.src = qs.get('src');
+render(true); drawGrid();
+</script>
+</body>
+</html>
